@@ -11,7 +11,7 @@ RosyDev::dev_update()
 
 usethis::use_version("minor")
 
-dev_update()
+RosyDev::dev_update()
 
 devtools::build_readme()
 
