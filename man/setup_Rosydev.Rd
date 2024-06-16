@@ -4,12 +4,14 @@
 \alias{setup_RosyDev}
 \title{Package System}
 \usage{
-setup_RosyDev(silent = F, launch_files = T)
+setup_RosyDev(silent = F, launch_files = T, overwrite = F)
 }
 \arguments{
 \item{silent}{logical for messages}
 
 \item{launch_files}{logical for launching files}
+
+\item{overwrite}{logical for overwrite}
 }
 \value{
 path

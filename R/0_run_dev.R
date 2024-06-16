@@ -24,9 +24,10 @@ dev_update <- function(silent = F){
 #' @description Find the file system of a package
 #' @param silent logical for messages
 #' @param launch_files logical for launching files
+#' @param overwrite logical for overwrite
 #' @return path
 #' @export
-setup_RosyDev <- function(silent = F,launch_files = T){
+setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
   usethis::use_pipe()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
@@ -40,10 +41,15 @@ setup_RosyDev <- function(silent = F,launch_files = T){
     file.path(dev_dir,"dev.R")
   )
   for(i in 1:length(copy_these)){
+    the_file_exisits <- file.exists(paste_here[i])
+    if(the_file_exisits){
+      message("Already a file: ",paste_here[i])
+      if(overwrite)message("overwritten!")
+    }
     file.copy(
       from = copy_these[i],
       to = paste_here[i],
-      overwrite = T
+      overwrite = overwrite
     )
   }
   if(launch_files){
