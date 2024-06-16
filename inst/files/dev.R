@@ -2,10 +2,9 @@
 library("RosyDev") # remotes::install_github("brandonerose/RosyDev")
 (pkg_dir <- getwd())
 (pkg_name <- basename(pkg_dir))
-pkg_title <- "Rosy Develpoment"
 # devtools::load_all()
 
-setup_RosyDev()
+setup_RosyDev(overwrite = T) # be careful will overwrite certain files
 
 dev_update()
 
