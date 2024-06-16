@@ -65,13 +65,6 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
   }
   message("RosyDev setup successful!")
 }
-#' @title Package System
-#' @description Find the file system of a package
-#' @return path
-#' @export
-pkg_sys <- function(...) {
-  system.file(..., basename(getwd()))
-}
 #' @title Clear Environment
 #' @description clear the global environment
 #' @return cleared environment
