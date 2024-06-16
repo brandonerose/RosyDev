@@ -26,7 +26,7 @@ dev_update <- function(silent = F){
 #' @param launch_files logical for launching files
 #' @return path
 #' @export
-setup_Rosydev <- function(silent = F,launch_files = T){
+setup_RosyDev <- function(silent = F,launch_files = T){
   usethis::use_pipe()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
