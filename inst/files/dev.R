@@ -9,7 +9,7 @@ RosyDev::setup_RosyDev(overwrite = T) # be careful will overwrite certain files
 
 RosyDev::dev_update()
 
-usethis::use_version("minor")
+usethis::use_version("dev")
 
 RosyDev::dev_update()
 
