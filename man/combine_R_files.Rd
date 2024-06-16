@@ -24,7 +24,7 @@ combine_R_files(
 
 \item{max_new_lines}{integer for max number of new lines}
 
-\item{new_lines}{characeter vector for new lines}
+\item{new_lines}{character vector for new lines}
 }
 \value{
 message

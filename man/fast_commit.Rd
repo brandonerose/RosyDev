@@ -6,6 +6,9 @@
 \usage{
 fast_commit(comment = "dev")
 }
+\arguments{
+\item{comment}{character string for commit message}
+}
 \value{
 commited git
 }

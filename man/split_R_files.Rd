@@ -21,7 +21,7 @@ split_R_files(
 
 \item{header_symbol}{single character for your header separator in combined file}
 
-\item{new_lines}{characeter vector for new lines}
+\item{new_lines}{character vector for new lines}
 }
 \value{
 message

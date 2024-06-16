@@ -4,7 +4,7 @@
 #' @param filename a file name (ends in .R)
 #' @param header_symbol single character for your header separator in combined file
 #' @param max_new_lines integer for max number of new lines
-#' @param new_lines characeter vector for new lines
+#' @param new_lines character vector for new lines
 #' @return message
 #' @export
 combine_R_files <- function(source_dir= file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0)) {
@@ -53,6 +53,7 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
 }
 #' @title Fast Commit
 #' @description commit for git with one function
+#' @param comment character string for commit message
 #' @return commited git
 #' @export
 fast_commit <- function(comment = "dev"){
