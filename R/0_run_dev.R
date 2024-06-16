@@ -65,14 +65,3 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
   }
   message("RosyDev setup successful!")
 }
-#' @title Clear Environment
-#' @description clear the global environment
-#' @return cleared environment
-#' @export
-clear_env <- function(){
-  pos <- 1
-  rm(list=ls(all.names = T,pos = pos),pos = pos)
-  cat("\014")
-  if(!is.null(grDevices::dev.list())) grDevices::dev.off()
-  grDevices::graphics.off()
-}
