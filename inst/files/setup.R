@@ -1,6 +1,6 @@
 # SETUP ####
 pkg_name <- basename(getwd())
-usethis::use_description(
+golem::fill_desc(
   pkg_name = pkg_name, # The Name of the package containing the App
   pkg_title = "Rosy Dev", # The Title of the package containing the App
   pkg_description = "Rosy development for your R package.", # The Description of the package containing the App
