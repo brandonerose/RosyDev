@@ -1,0 +1,24 @@
+Package: RosyDev
+Title: Rosy Dev
+Version: 0.0.0.9007
+Authors@R: 
+    person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
+Description: Rosy development for your R package.
+License: MIT + file LICENSE
+URL: https://github.com/brandonerose/RosyDev
+BugReports: https://github.com/brandonerose/RosyDev/issues
+Depends: 
+    R (>= 2.10)
+Imports: 
+    attachment,
+    devtools,
+    golem,
+    grDevices,
+    magrittr,
+    rstudioapi,
+    tools,
+    usethis,
+    utils
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
