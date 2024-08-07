@@ -1,6 +1,6 @@
 Package: RosyDev
 Title: Rosy Dev
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
 Description: Rosy development for your R package.
@@ -20,4 +20,4 @@ Imports:
     utils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
