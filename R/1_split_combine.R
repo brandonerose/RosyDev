@@ -59,3 +59,22 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
 fast_commit <- function(comment = "dev"){
   usethis::use_git(comment)
 }
+#' @title pkg_combine_R_files
+#' @inheritParams source combine_R_files
+#' @param pkg package name as character string
+#' @return message
+#' @export
+pkg_combine_R_files <- function(pkg, destination_dir=getwd(),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0)) {
+  combine_R_files(
+    source_dir = system.file("R", package = package),
+    destination_dir = destination_dir,
+    filename = filename,
+    header_symbol = header_symbol,
+    max_new_lines = max_new_lines,
+    new_lines = new_lines
+  )
+}
+#' @title split_R_files
+#' @inheritParams combine_R_files
+#' @return message
+#' @export
