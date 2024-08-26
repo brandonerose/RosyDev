@@ -53,12 +53,14 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
       overwrite = overwrite
     )
   }
+  if(overwrite||!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
   if(launch_files){
     file_paths <- c(
       file.path(pkg_dir,"README.Rmd"),
       file.path(pkg_dir,"NEWS.md"),
       file.path(dev_dir,"setup.R"),
-      file.path(dev_dir,"dev.R")
+      file.path(dev_dir,"dev.R"),
+      file.path(dev_dir,"combined.R")
     )
     for(file_path in file_paths){
       if(file.exists(file_path)) rstudioapi::navigateToFile(file_path)
