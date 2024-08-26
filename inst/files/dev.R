@@ -2,6 +2,7 @@
 # remotes::install_github("brandonerose/Rosyverse")
 # Rosyverse::update_all()
 # Rosyverse::load_all()
+RosyUtils::clear_env()
 (pkg_dir <- getwd())
 (pkg_name <- basename(pkg_dir))
 # devtools::load_all()
