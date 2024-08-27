@@ -68,3 +68,13 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
   }
   message("RosyDev setup successful!")
 }
+#' @title Fast Commit
+#' @description commit for git with one function
+#' @param comment character string for commit message
+#' @return commited git
+#' @export
+fast_commit <- function(message = "dev", push = F, bump_version = F, which = "dev"){
+  usethis::use_git(message = message)
+  if(bump_version) usethis::use_version(which = which)
+  if(push) usethis:::git_push()
+}

@@ -51,14 +51,6 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
     cat("File saved:", output_file, "\n")
   }
 }
-#' @title Fast Commit
-#' @description commit for git with one function
-#' @param comment character string for commit message
-#' @return commited git
-#' @export
-fast_commit <- function(comment = "dev"){
-  usethis::use_git(comment)
-}
 #' @title pkg_combine_R_files
 #' @inheritParams source combine_R_files
 #' @param pkg package name as character string
