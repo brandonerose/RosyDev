@@ -4,10 +4,25 @@
 \alias{fast_commit}
 \title{Fast Commit}
 \usage{
-fast_commit(message = "dev", push = F, bump_version = F, which = "dev")
+fast_commit(
+  message = "dev",
+  push = F,
+  ask = T,
+  bump_version = F,
+  which = "dev"
+)
 }
 \arguments{
-\item{comment}{character string for commit message}
+\item{message}{character string for commit message}
+
+\item{push}{logical for git push. Also see \code{ask}.}
+
+\item{ask}{logical for asking before final git push}
+
+\item{bump_version}{logical for bumping version. Will also run \code{dev_update} again. See \code{which.}}
+
+\item{which}{A string specifying which level to increment, one of: "major",
+"minor", "patch", "dev". If \code{NULL}, user can choose interactively.}
 }
 \value{
 commited git

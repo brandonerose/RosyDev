@@ -70,15 +70,25 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
 }
 #' @title Fast Commit
 #' @description commit for git with one function
-#' @param comment character string for commit message
+#' @param message character string for commit message
+#' @param push logical for git push. Also see `ask`.
+#' @param ask logical for asking before final git push
+#' @param bump_version logical for bumping version. Will also run `dev_update` again. See `which.`
+#' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = F, bump_version = F, which = "dev"){
+fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
   usethis::use_git(message = message)
   if(bump_version){
     usethis::use_version(which = which)
     dev_update()
     usethis::use_git(message = message)
   }
-  if(push) usethis:::git_push()
+  if(push){
+    choice <- T
+    if(ask){
+      choice <- utils::menu(choices = c("Yes", "No"),title = "You are about to push to git based on what has been committed. Are you sure?")==1
+    }
+    if(choice) usethis:::git_push()
+  }
 }
