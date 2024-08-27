@@ -16,7 +16,7 @@ RosyDev::dev_update()
 
 devtools::build_readme()
 
-RosyDev::fast_commit(comment = "dev", push = T, bump_version = T, which = "dev")
+RosyDev::fast_commit(message = "dev", push = T, bump_version = T, which = "dev")
 
 system("git push")
 
