@@ -75,6 +75,10 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
 #' @export
 fast_commit <- function(message = "dev", push = F, bump_version = F, which = "dev"){
   usethis::use_git(message = message)
-  if(bump_version) usethis::use_version(which = which)
+  if(bump_version){
+    usethis::use_version(which = which)
+    dev_update()
+    usethis::use_git(message = message)
+  }
   if(push) usethis:::git_push()
 }
