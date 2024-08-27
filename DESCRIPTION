@@ -1,6 +1,6 @@
 Package: RosyDev
 Title: Rosy Dev
-Version: 0.1.0.9003
+Version: 0.1.0.9004
 Authors@R: 
     person("Brandon", "Rose", , "thecodingdocs@gmail.com", role = c("cre", "aut"))
 Description: Rosy development for your R package.
