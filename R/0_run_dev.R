@@ -30,7 +30,7 @@ dev_update <- function(silent = F,use_internal_pkg = T){
 #' @return message
 #' @export
 add_to_sysdata <- function(..., silent = F,overwrite = F){
-  objs <- usethis:::dots(...) %>% usethis:::get_objs_from_dots()
+  objs <- usethis:::get_objs_from_dots(usethis:::dots(...))
   usethis:::check_is_package()
   temp_env <- new.env()
   path <- "R/sysdata.rda"
