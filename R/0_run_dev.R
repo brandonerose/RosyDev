@@ -42,7 +42,6 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
     if(!silent) ifelse(object_name %in% objects(envir = temp_env),"Updated: ","Added: ") %>% message(object_name)
     assign(object_name, get(object_name, envir = parent.frame()), envir = temp_env)
   }
-  usethis::use_data()
   mapply(
     save,
     list = list(names(temp_env)),
