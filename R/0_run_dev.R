@@ -3,7 +3,8 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(silent = F,use_internal_pkg = F){
+dev_update <- function(silent = F,use_internal_pkg = T){
+  usethis:::check_is_package()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
   pkg_name <- basename(pkg_dir)
@@ -20,8 +21,34 @@ dev_update <- function(silent = F,use_internal_pkg = F){
   if(use_internal_pkg){
     pkg_version <- as.character(utils::packageVersion(pkg_name))
     pkg_date <- Sys.Date()
-    usethis::use_data(pkg_name,pkg_version,pkg_date,internal = T,overwrite = T)
+    add_to_sysdata(pkg_name,pkg_version,pkg_date)
   }
+}
+#' @title add_to_sysdata
+#' @description Load sysdata.rda if it exists and add objects in `...` to it.
+#' @param silent logical for messages
+#' @return message
+#' @export
+add_to_sysdata <- function(..., silent = F,overwrite = F){
+  objs <- usethis:::dots(...) %>% usethis:::get_objs_from_dots()
+  usethis:::check_is_package()
+  temp_env <- new.env()
+  path <- "R/sysdata.rda"
+  if(file.exists(path) && ! overwrite){
+    load(path, envir = temp_env)
+    if(!silent) message("RosyDev loaded: ",names(temp_env) %>% paste0(collapse = ", "))
+  }
+  for(object_name in objs){
+    if(!silent) ifelse(object_name %in% objects(envir = temp_env),"Updated: ","Added: ") %>% message(object_name)
+    assign(object_name, get(object_name, envir = .GlobalEnv), envir = temp_env)
+  }
+  mapply(
+    save,
+    list = list(names(temp_env)),
+    file = path_test,
+    MoreArgs = list(envir = temp_env, compress = "bzip2", version = 2)
+  )
+  if(!silent) message("RosyDev saved: ",names(temp_env) %>% paste0(collapse = ", "))
 }
 #' @title Package System
 #' @description Find the file system of a package
@@ -31,6 +58,7 @@ dev_update <- function(silent = F,use_internal_pkg = F){
 #' @return path
 #' @export
 setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
+  usethis:::check_is_package()
   usethis::use_pipe()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
