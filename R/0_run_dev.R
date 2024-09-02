@@ -45,7 +45,7 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
   mapply(
     save,
     list = list(names(temp_env)),
-    file = path_test,
+    file = path,
     MoreArgs = list(envir = temp_env, compress = "bzip2", version = 2)
   )
   if(!silent) message("RosyDev saved: ",names(temp_env) %>% paste0(collapse = ", "))
