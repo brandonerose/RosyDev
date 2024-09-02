@@ -3,7 +3,7 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(silent = F){
+dev_update <- function(silent = F,use_internal_pkg = F){
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
   pkg_name <- basename(pkg_dir)
@@ -17,9 +17,11 @@ dev_update <- function(silent = F){
   devtools::load_all()
   combine_R_files()
   # rstudioapi::navigateToFile("dev/combined.R")
-  pkg_version <- as.character(utils::packageVersion(pkg_name))
-  pkg_date <- Sys.Date()
-  usethis::use_data(pkg_name,pkg_version,pkg_date,internal = T,overwrite = T)
+  if(use_internal_pkg){
+    pkg_version <- as.character(utils::packageVersion(pkg_name))
+    pkg_date <- Sys.Date()
+    usethis::use_data(pkg_name,pkg_version,pkg_date,internal = T,overwrite = T)
+  }
 }
 #' @title Package System
 #' @description Find the file system of a package
