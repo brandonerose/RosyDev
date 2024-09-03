@@ -99,6 +99,8 @@ download_and_extract_source_R_files <- function(pkg) {
     if(length(tar_file)>0){
       was_downloaded <- T
       tar_file <- tar_file[,2]
+    }else{
+      was_downloaded <- F
     }
   }
   if (was_downloaded) {
@@ -164,12 +166,15 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
   for(pkg in pkgs){
     ROW <- which(installed_packages$Package==pkg)
     is_base <- pkg %in% base_pkgs
+    was_download <- F
     if(pkg %in% pkgs_missing){
-      source_dir <- file.path(temp_dir,pkg,"R")
+      source_dir_root <- file.path(temp_dir,pkg)
       if(is_base){
-        source_dir <- file.path(source_dir_base,pkg,"R")
+        source_dir_root <- file.path(source_dir_base,pkg)
       }
-      if(overwrite||!file.exists(source_dir)){
+      source_dir <- file.path(source_dir_root,"R")
+      only_missing_R_folder <- file.exists(source_dir_root)&&!file.exists(source_dir)
+      if((overwrite||!file.exists(source_dir))&&!only_missing_R_folder){
         was_download <- download_and_extract_source_R_files(pkg)
       }
       is_there <- file.exists(source_dir)
