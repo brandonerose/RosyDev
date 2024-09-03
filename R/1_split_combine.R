@@ -5,9 +5,23 @@
 #' @param header_symbol single character for your header separator in combined file
 #' @param max_new_lines integer for max number of new lines
 #' @param new_lines character vector for new lines
+#' @param overwrite logical for overwriting original file
 #' @return message
 #' @export
-combine_R_files <- function(source_dir= file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0)) {
+combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = T) {
+  # if(!file.exists(source_dir)){
+  #   installed_packages <- installed.packages() %>% as.data.frame()
+  #   pkgs <- installed_packages$Package %>% as.character()
+  #   if(!source_dir%in%pkgs){
+  #     stop("Your `source_dir` does not exist as a folder AND it is not the name of one of your installed packages!")
+  #   }
+  #   source_dir <- system.file("R",package = source_dir)
+  # }
+  # if(!file.exists(destination_dir)){
+  #   the_wd <- getwd()
+  #   message("`destination_dir` does not exist. Will default to your working directory... \nInstead of: '",destination_dir,"'\nWill Use: '",the_wd,"'")
+  #   destination_dir <- the_wd
+  # }
   file_list <- list.files(source_dir, pattern = "\\.R$", full.names = TRUE)
   combined_text <- character(0)
   for (file in file_list) {# file <- file_list %>% sample(1)
@@ -20,8 +34,10 @@ combine_R_files <- function(source_dir= file.path(getwd(),"R"), destination_dir=
   combined_text <-paste(combined_text, collapse = "\n")
   combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
   destination_file <- file.path(destination_dir, filename)
-  writeLines(combined_text, destination_file)
-  cat("Combined file saved to:", destination_file, "\n")
+  if(!file.exists(destination_file)||overwrite){
+    writeLines(combined_text, destination_file)
+    cat("Combined file saved to:", destination_file, "\n")
+  }
 }
 #' @title split_R_files
 #' @inheritParams combine_R_files
@@ -51,22 +67,116 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
     cat("File saved:", output_file, "\n")
   }
 }
+download_and_extract_source_R_files <- function(pkg) {
+  temp_dir <- tempdir()
+  tar_file<-download.packages(pkg, destdir = temp_dir, type = "source")
+  was_downloaded <- length(tar_file)>0
+  if (was_downloaded) {
+    untar(tarfile = tar_file[,2], exdir = temp_dir)
+  }
+  return(was_downloaded)
+}
 #' @title pkg_combine_R_files
 #' @inheritParams source combine_R_files
-#' @param pkg package name as character string
+#' @param pkgs package name(s) as character string
+#' @param filename_type character string of type filename: "name__version" or "name"
 #' @return message
 #' @export
-pkg_combine_R_files <- function(pkg, destination_dir=getwd(),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0)) {
-  combine_R_files(
-    source_dir = system.file("R", package = package),
-    destination_dir = destination_dir,
-    filename = filename,
+pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F,launch_file = 0) {
+  installed_packages <- installed.packages() %>% as.data.frame()
+  installed_packages$comparison_name <- installed_packages$Package
+  if(filename_type=="name__version"){
+    installed_packages$comparison_name <- paste0(installed_packages$Package,"__",gsub("\\.|\\-","_",installed_packages$Version))
+  }
+  installed_packages$file_name <- installed_packages$comparison_name %>% paste0(".R")
+  if(!file.exists(destination_dir)){
+    if(utils::menu(c("Yes","No and stop"),title = paste0("Your listed directory does not exist! Would you like to create? ",destination_dir))==2){
+      stop("Stopped!")
+    }
+    dir.create(destination_dir,showWarnings = F)
+  }
+  pkgs_possible <- installed_packages$Package %>% as.character()
+  BAD <- pkgs[which(!pkgs%in%pkgs_possible)]
+  if(length(BAD)>0)stop("You have listed pkgs that are not installed: ",BAD %>% paste0(collapse = ", "))
+  pkgs_df <- installed_packages[which(installed_packages$Package%in%pkgs),]
+  downloaded_file_list <-
+    destination_dir %>%
+    list.files(pattern = "\\.R$", full.names = TRUE) %>%
+    basename() %>%
+    tools::file_path_sans_ext()
+  THERE <- pkgs_df$comparison_name %in% downloaded_file_list
+  pkgs_there <- pkgs_df$Package[which(THERE)]
+  pkgs_missing <- pkgs_df$Package[which(!THERE)]
+  if(length(pkgs_there)>0) message("Packages already there: ",pkgs_there %>% paste0(collapse = ", "))
+  if(length(pkgs_missing)>0) message("Packages missing: ",pkgs_missing %>% paste0(collapse = ", "))
+  if( ! overwrite){
+    if(filename_type=="name__version"){
+      downloaded_file_list <-
+        downloaded_file_list %>%
+        strsplit("__") %>%
+        sapply(function(x){x[[1]]}) %>%
+        unlist()
+    }
+    pkgs_missing <- pkgs_missing[which(!pkgs_missing%in%downloaded_file_list)]
+  }
+  if(length(pkgs_missing)==0)message("Nothing to be done at... ",destination_dir)
+  # pb <- progress::progress_bar$new(
+  #   format = "  getting packages [:bar] :percent ETA: :eta",
+  #   total = length(pkgs_missing), clear = FALSE, width= 60)
+  for(pkg in pkgs){
+    ROW <- which(installed_packages$Package==pkg)
+    if(pkg %in% pkgs_missing){
+      source_dir <- file.path(tempdir(),pkg,"R")
+      if(! overwrite||!file.exists(source_dir)){
+        was_download <- download_and_extract_source_R_files(pkg)
+      }
+      if(was_download||file.exists(source_dir)){
+        if(file.exists(source_dir)){
+          combine_R_files(
+            source_dir = source_dir,
+            destination_dir = destination_dir,
+            filename = installed_packages$file_name[ROW],
+            header_symbol = header_symbol,
+            max_new_lines = max_new_lines,
+            new_lines = new_lines,
+            overwrite = overwrite
+          )
+        }
+      }
+    }
+    if(launch_file>0){
+      file.path(destination_dir, installed_packages$file_name[ROW]) %>% rstudioapi::navigateToFile()
+      launch_file <- launch_file - 1
+    }
+    # pb$tick()
+  }
+  pkgs_df <- installed_packages[which(installed_packages$Package%in%pkgs),]
+  downloaded_file_list <-
+    destination_dir %>%
+    list.files(pattern = "\\.R$", full.names = TRUE) %>%
+    basename() %>%
+    tools::file_path_sans_ext()
+  THERE <- pkgs_df$comparison_name %in% downloaded_file_list
+  pkgs_there <- pkgs_df$Package[which(THERE)]
+  pkgs_missing <- pkgs_df$Package[which(!THERE)]
+  # if(length(pkgs_there)>0) message("Packages already there: ",pkgs_there %>% paste0(collapse = ", "))
+  if(length(pkgs_missing)>0) message("Packages STILL missing: ",pkgs_missing %>% paste0(collapse = ", "))
+}
+#' @title pkg_combine_R_files_launch
+#' @inheritParams source combine_R_files
+#' @param pkgs package name(s) as character string
+#' @param filename_type character string of type filename: "name__version" or "name"
+#' @return message
+#' @export
+pkg_combine_R_files_launch <- function(pkg,destination_dir = tempdir(),filename_type = "name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F) {
+  pkg_combine_R_files(
+    pkgs = pkg,
+    destination_dir = tempdir(),
+    filename_type = "name__version",
     header_symbol = header_symbol,
     max_new_lines = max_new_lines,
-    new_lines = new_lines
+    new_lines = new_lines,
+    overwrite = overwrite,
+    launch_file = 1
   )
 }
-#' @title split_R_files
-#' @inheritParams combine_R_files
-#' @return message
-#' @export

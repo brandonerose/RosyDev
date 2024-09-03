@@ -10,7 +10,8 @@ combine_R_files(
   filename = "combined.R",
   header_symbol = "=",
   max_new_lines = 0,
-  new_lines = character(0)
+  new_lines = character(0),
+  overwrite = T
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ combine_R_files(
 \item{max_new_lines}{integer for max number of new lines}
 
 \item{new_lines}{character vector for new lines}
+
+\item{overwrite}{logical for overwriting original file}
 }
 \value{
 message
