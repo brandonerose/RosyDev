@@ -67,12 +67,42 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
     cat("File saved:", output_file, "\n")
   }
 }
+execute_with_tryCatch <- function(expr) {
+  result <- tryCatch(
+    {
+      eval(expr)  # Evaluate the expression
+      TRUE        # If no error, return TRUE
+    },
+    error = function(e) {
+      FALSE       # If error occurs, return FALSE
+    }
+  )
+  return(result)
+}
 download_and_extract_source_R_files <- function(pkg) {
   temp_dir <- tempdir()
-  tar_file<-download.packages(pkg, destdir = temp_dir, type = "source")
-  was_downloaded <- length(tar_file)>0
+  installed_packages <- installed.packages() %>% as.data.frame()
+  is_base <- pkg %in% installed_packages$Package[which(installed_packages$Priority =="base")]
+  if(is_base){
+    r_version <- R.Version()
+    base_file_name <- paste0("R-", paste(r_version$major, r_version$minor, sep = "."))
+    tarball_file_name <- paste0(base_file_name, ".tar.gz")
+    tarball_url <- paste0("https://cran.r-project.org/src/base/R-", r_version$major, "/",tarball_file_name)
+    temp_dir <- tempdir()
+    tar_file <- file.path(temp_dir,tarball_file_name)
+    was_downloaded <- tryCatch({
+      download.file(tarball_url, tar_file)
+      TRUE
+    },error = function(e) {FALSE})
+  }else{
+    tar_file<-download.packages(pkg, destdir = temp_dir, type = "source")
+    if(length(tar_file)>0){
+      was_downloaded <- T
+      tar_file <- tar_file[,2]
+    }
+  }
   if (was_downloaded) {
-    untar(tarfile = tar_file[,2], exdir = temp_dir)
+    untar(tarfile = tar_file, exdir = temp_dir)
   }
   return(was_downloaded)
 }
@@ -123,15 +153,28 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
   # pb <- progress::progress_bar$new(
   #   format = "  getting packages [:bar] :percent ETA: :eta",
   #   total = length(pkgs_missing), clear = FALSE, width= 60)
+  base_pkgs <- installed_packages$Package[which(installed_packages$Priority=="base")]
+  r_version <- R.Version()
+  base_file_name <- paste0("R-", paste(r_version$major, r_version$minor, sep = "."))
+  tarball_file_name <- paste0(base_file_name, ".tar.gz")
+  tarball_url <- paste0("https://cran.r-project.org/src/base/R-", r_version$major, "/",tarball_file_name)
+  temp_dir <- tempdir()
+  tarball_file_name <- file.path(temp_dir,tarball_file_name)
+  source_dir_base <- file.path(temp_dir,base_file_name,"src","library")
   for(pkg in pkgs){
     ROW <- which(installed_packages$Package==pkg)
+    is_base <- pkg %in% base_pkgs
     if(pkg %in% pkgs_missing){
-      source_dir <- file.path(tempdir(),pkg,"R")
-      if(! overwrite||!file.exists(source_dir)){
+      source_dir <- file.path(temp_dir,pkg,"R")
+      if(is_base){
+        source_dir <- file.path(source_dir_base,pkg,"R")
+      }
+      if(overwrite||!file.exists(source_dir)){
         was_download <- download_and_extract_source_R_files(pkg)
       }
-      if(was_download||file.exists(source_dir)){
-        if(file.exists(source_dir)){
+      is_there <- file.exists(source_dir)
+      if(was_download||is_there){
+        if(is_there){
           combine_R_files(
             source_dir = source_dir,
             destination_dir = destination_dir,
@@ -171,7 +214,7 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
 pkg_combine_R_files_launch <- function(pkg,destination_dir = tempdir(),filename_type = "name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F) {
   pkg_combine_R_files(
     pkgs = pkg,
-    destination_dir = tempdir(),
+    destination_dir = destination_dir,
     filename_type = "name__version",
     header_symbol = header_symbol,
     max_new_lines = max_new_lines,
