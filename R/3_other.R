@@ -48,7 +48,6 @@ check_namespace_conflicts<-function(pkgs){
   y <- y[order(y$exp_exp_conflict, decreasing = T),]
   z<- y[which(!is.na(y$exp_exp_conflict)),]
   if(nrow(z)>0){
-
     z$function_name <- stringr::str_pad(
       string = z$function_name,
       width = (z$function_name %>% nchar() %>% max())+2,
