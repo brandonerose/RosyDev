@@ -2,6 +2,7 @@
 
 export("%>%")
 export(add_to_sysdata)
+export(check_namespace_conflicts)
 export(combine_R_files)
 export(dev_update)
 export(fast_commit)

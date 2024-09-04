@@ -15,6 +15,7 @@ Imports:
     golem,
     magrittr,
     rstudioapi,
+    stringr,
     tools,
     usethis,
     utils
