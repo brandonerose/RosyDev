@@ -6,6 +6,7 @@ check_namespace_conflicts<-function(pkgs){
   x <- NULL
   for(pkg in pkgs){
     library(pkg, character.only = T)
+    exported_functions <- ls(paste0("package:",pkg))
     internal_functions <-
       x <- x %>% rbind(
         data.frame(
