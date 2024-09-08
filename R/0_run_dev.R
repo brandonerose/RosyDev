@@ -11,11 +11,9 @@ dev_update <- function(silent = F,use_internal_pkg = T){
   if( ! silent) message("pkg_name: ",pkg_name)
   if(!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
   pkg_version <- as.character(utils::packageVersion(pkg_name))
-  golem::set_golem_options(
-    golem_name = pkg_name,
-    golem_version = pkg_version,
-    golem_wd = pkg_dir
-  )
+  # golem::set_golem_name(pkg_name)
+  golem::set_golem_version(pkg_version,talkative = F)
+  golem::set_golem_wd(pkg_dir,talkative = F)
   split_R_files()
   devtools::document()
   attachment::att_amend_desc()
