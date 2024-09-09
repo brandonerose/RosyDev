@@ -8,7 +8,7 @@ RosyUtils::clear_env()
 (pkg_name <- basename(pkg_dir))
 # devtools::load_all()
 
-RosyDev::setup_RosyDev(overwrite = T) # be careful will overwrite certain files
+RosyDev::setup_RosyDev(overwrite = T, use_golem = F) # be careful will overwrite certain files
 
 RosyDev::dev_update()
 
@@ -17,6 +17,14 @@ RosyDev::fast_commit(
   push = T,
   ask = T,
   bump_version = T,
+  which = "dev"
+)
+
+RosyDev::fast_commit(
+  message = "dev",
+  push = T,
+  ask = F,
+  bump_version = F,
   which = "dev"
 )
 
