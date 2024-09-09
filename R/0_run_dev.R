@@ -152,12 +152,14 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
     system.file("shinyexample","R","app_config.R", package = "golem")
   )
   for (golem_file in golem_files){
-    path_to_new <- file.path(basename(dirname(golem_file)), basename(golem_file))
+    bn <- basename(golem_file)
+    dn <- basename(dirname(golem_file))
+    path_to_new <- file.path(dn,bn)
     the_file_exisits <- file.exists(path_to_new)
     if(! the_file_exisits || overwrite){
       file.copy(
         from = golem_file,
-        to = file.path("inst"),
+        to = dn,
         overwrite = T
       )
       try({
