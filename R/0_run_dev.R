@@ -3,7 +3,7 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(silent = F,use_internal_pkg = T){
+dev_update <- function(silent = F,use_internal_pkg = T,is_production = F){
   usethis:::check_is_package()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
@@ -19,9 +19,16 @@ dev_update <- function(silent = F,use_internal_pkg = T){
   devtools::load_all()
   combine_R_files()
   pkg_version <- as.character(utils::packageVersion(pkg_name))
-  golem::set_golem_version(pkg_version,talkative = F)
-  golem::set_golem_wd(pkg_dir,talkative = F)
-  # rstudioapi::navigateToFile("dev/combined.R")
+  if(file.exists("inst/golem-config.yml")){
+    golem::set_golem_options(
+      golem_name = pkg_name,
+      golem_version = pkg_version,
+      golem_wd = pkg_dir,
+      talkative = F,
+      app_prod = is_production
+    )
+    options("golem.app.prod" = is_production)
+  }
   if(use_internal_pkg){
     pkg_date <- Sys.Date()
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
@@ -58,9 +65,10 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
 #' @param silent logical for messages
 #' @param launch_files logical for launching files
 #' @param overwrite logical for overwrite
+#' @param overwrite logical for using golem
 #' @return path
 #' @export
-setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
+setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = F){
   usethis:::check_is_package()
   usethis::use_pipe()
   pkg_dir <- getwd()
@@ -97,6 +105,25 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F){
     )
     for(file_path in file_paths){
       if(file.exists(file_path)) rstudioapi::navigateToFile(file_path)
+    }
+  }
+  if(use_golem){
+    dir.create("inst",showWarnings = F)
+    path_to_new <- file.path("inst","golem-config.yml")
+    the_file_exisits <- file.exists(path_to_new)
+    if(the_file_exisits){
+      message("Already a file: ",path_to_new)
+      if(overwrite)message("overwritting!")
+    }
+    if(! the_file_exisits || overwrite){
+      file.copy(
+        from = system.file("shinyexample","inst","golem-config.yml", package = "golem"),
+        to = file.path("inst"),
+        overwrite = T
+      )
+      try({
+        replace_word_file(file = path_to_new, pattern = "shinyexample", replace = pkg_name)
+      }, silent = TRUE)
     }
   }
   message("RosyDev setup successful!")
