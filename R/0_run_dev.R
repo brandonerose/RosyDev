@@ -109,22 +109,29 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
   }
   if(use_golem){
     dir.create("inst",showWarnings = F)
-    path_to_new <- file.path("inst","golem-config.yml")
-    the_file_exisits <- file.exists(path_to_new)
-    if(the_file_exisits){
-      message("Already a file: ",path_to_new)
-      if(overwrite)message("overwritting!")
+    golem_files <- c(
+      system.file("shinyexample","inst","golem-config.yml", package = "golem"),
+      system.file("shinyexample","R","app_config.R", package = "golem")
+    )
+    for (golem_file in golem_files){
+      path_to_new <- file.path("inst","golem-config.yml")
+      the_file_exisits <- file.exists(path_to_new)
+      if(the_file_exisits){
+        message("Already a file: ",path_to_new)
+        if(overwrite)message("overwritting!")
+      }
+      if(! the_file_exisits || overwrite){
+        file.copy(
+          from = golem_file,
+          to = file.path("inst"),
+          overwrite = T
+        )
+        try({
+          replace_word_file(file = path_to_new, pattern = "shinyexample", replace = pkg_name)
+        }, silent = TRUE)
+      }
     }
-    if(! the_file_exisits || overwrite){
-      file.copy(
-        from = system.file("shinyexample","inst","golem-config.yml", package = "golem"),
-        to = file.path("inst"),
-        overwrite = T
-      )
-      try({
-        replace_word_file(file = path_to_new, pattern = "shinyexample", replace = pkg_name)
-      }, silent = TRUE)
-    }
+
   }
   message("RosyDev setup successful!")
 }
