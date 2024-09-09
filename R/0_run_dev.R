@@ -163,7 +163,7 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
         overwrite = T
       )
       try({
-        replace_word_file(file = path_to_new, pattern = "shinyexample", replace = pkg_name)
+        RosyUtils::replace_word_file(file = path_to_new, pattern = "shinyexample", replace = pkg_name)
       }, silent = TRUE)
     }
     if(!silent){
