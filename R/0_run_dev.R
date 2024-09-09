@@ -20,6 +20,7 @@ dev_update <- function(silent = F,use_internal_pkg = T,is_production = F){
   combine_R_files()
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
+    copy_golem_to_wd()
     golem::set_golem_options(
       golem_name = pkg_name,
       golem_version = pkg_version,
@@ -108,7 +109,10 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
     }
   }
   if(use_golem){
-    copy_golem_to_wd()
+    copy_golem_to_wd(
+      overwrite = overwrite,
+      silent = silent
+    )
   }
   message("RosyDev setup successful!")
 }
@@ -140,7 +144,7 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
 #' @description copy minumim golem files to working directory
 #' @inheritParams setup_RosyDev
 #' @return files being copied if needed/wanted
-copy_golem_to_wd <- function(overwrite, silent){
+copy_golem_to_wd <- function(overwrite = F, silent = T){
   if(!usethis:::is_package())stop("Your wd is not a package!")
   dir.create("inst",showWarnings = F)
   golem_files <- c(
@@ -168,4 +172,3 @@ copy_golem_to_wd <- function(overwrite, silent){
     }
   }
 }
-
