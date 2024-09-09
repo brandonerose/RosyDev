@@ -11,7 +11,9 @@ setup_RosyDev(silent = F, launch_files = T, overwrite = F, use_golem = F)
 
 \item{launch_files}{logical for launching files}
 
-\item{overwrite}{logical for using golem}
+\item{overwrite}{logical for overwrite}
+
+\item{use_golem}{logical for using golem}
 }
 \value{
 path
