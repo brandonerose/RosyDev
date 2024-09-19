@@ -155,10 +155,11 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
 #' @param push logical for git push. Also see `ask`.
 #' @param ask logical for asking before final git push
 #' @param bump_version logical for bumping version. Will also run `dev_update` again. See `which.`
+#' @param launch_github logical for opening the github in your browser
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
+fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev",launch_github = T){
   usethis::use_git(message = message)
   if(bump_version){
     usethis::use_version(which = which)
@@ -166,11 +167,14 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     usethis::use_git(message = message)
   }
   if(push){
-    choice <- T
+    choice <- F
     if(ask){
       choice <- utils::menu(choices = c("Yes", "No"),title = "You are about to push to git based on what has been committed. Are you sure?")==1
     }
-    if(choice) usethis:::git_push()
+    if(choice){
+      usethis:::git_push()
+      if(launch_github)usethis::browse_github()
+    }
   }
 }
 #' @title copy_golem_to_wd

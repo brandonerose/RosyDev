@@ -9,7 +9,8 @@ fast_commit(
   push = F,
   ask = T,
   bump_version = F,
-  which = "dev"
+  which = "dev",
+  launch_github = T
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ fast_commit(
 
 \item{which}{A string specifying which level to increment, one of: "major",
 "minor", "patch", "dev". If \code{NULL}, user can choose interactively.}
+
+\item{launch_github}{logical for opening the github in your browser}
 }
 \value{
 commited git
