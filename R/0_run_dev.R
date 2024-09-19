@@ -143,7 +143,7 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
   }
 }
 #' @title copy_golem_to_wd
-#' @description copy minumim golem files to working directory
+#' @description copy minimum golem files to working directory
 #' @inheritParams setup_RosyDev
 #' @return files being copied if needed/wanted
 copy_golem_to_wd <- function(overwrite = F, silent = T){
@@ -177,9 +177,9 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
   }
 }
 #' @title delete_combined
-#' @description copy minumim golem files to working directory
-#' @inheritParams setup_RosyDev
-#' @return files being copied if needed/wanted
+#' @description delete combined.R file in dev for when you pull a new update from github
+#' @return message
+#' @export
 delete_combined <- function(){
   if(!usethis:::is_package())stop("Your wd is not a package!")
   delete_file(

@@ -7,8 +7,8 @@
 delete_combined()
 }
 \value{
-files being copied if needed/wanted
+message
 }
 \description{
-copy minumim golem files to working directory
+delete combined.R file in dev for when you pull a new update from github
 }

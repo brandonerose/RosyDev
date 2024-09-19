@@ -15,5 +15,5 @@ copy_golem_to_wd(overwrite = F, silent = T)
 files being copied if needed/wanted
 }
 \description{
-copy minumim golem files to working directory
+copy minimum golem files to working directory
 }

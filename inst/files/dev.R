@@ -8,7 +8,13 @@ RosyUtils::clear_env()
 (pkg_name <- basename(pkg_dir))
 # devtools::load_all()
 
-RosyDev::setup_RosyDev(overwrite = F, use_golem = F) # be careful will overwrite certain files
+RosyDev::setup_RosyDev(
+  overwrite = F, # be careful will overwrite certain files
+  use_golem = F,
+  launch_files = T
+)
+
+# delete_combined() # for when you pull a new update from github
 
 RosyDev::dev_update()
 
