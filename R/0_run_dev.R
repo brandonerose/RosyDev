@@ -79,14 +79,27 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
   if( ! silent) message("pkg_dir: ",pkg_dir)
   dir.create(dev_dir,showWarnings = F)
   dir.create(test_dir,showWarnings = F)
-  copy_these <- system.file(file.path("files",c("gitignore","Rbuildignore","setup.R","dev.R","test_dev.R","test_prod.R")),package = "RosyDev")
+  copy_these <- system.file(
+    file.path(
+      "files",
+      c(
+        "gitignore",
+        "Rbuildignore",
+        "setup.R",
+        "dev.R",
+        "test_dev.R",
+        "test_prod.R",
+        "README.Rmd"
+      )
+    ),package = "RosyDev")
   paste_here <- c(
     file.path(pkg_dir,".gitignore"),
     file.path(pkg_dir,".Rbuildignore"),
     file.path(dev_dir,"setup.R"),
     file.path(dev_dir,"dev.R"),
     file.path(dev_dir,"test_dev.R"),
-    file.path(dev_dir,"test_prod.R")
+    file.path(dev_dir,"test_prod.R"),
+    file.path(pkg_dir,"README.Rmd")
   )
   for(i in 1:length(copy_these)){
     the_file_exisits <- file.exists(paste_here[i])
@@ -100,7 +113,7 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
       overwrite = overwrite
     )
     if(was_copied){
-      if(basename(copy_these[i])=="test_prod.R"){
+      if(basename(copy_these[i])%in%c("README.Rmd","test_prod.R")){
         RosyUtils::replace_word_file(
           file = paste_here[i],
           pattern = "your_package_here",

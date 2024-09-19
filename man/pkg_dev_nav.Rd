@@ -4,7 +4,7 @@
 \alias{pkg_dev_nav}
 \title{pkg_dev_nav}
 \usage{
-pkg_dev_nav(name = NULL)
+pkg_dev_nav(name = NULL, pane = T)
 }
 \arguments{
 \item{name}{character string for the file name to be opened}

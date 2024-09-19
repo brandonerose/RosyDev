@@ -4,9 +4,12 @@ golem::fill_desc(
   pkg_name = pkg_name, # The Name of the package containing the App
   pkg_title = "Rosy Dev", # The Title of the package containing the App
   pkg_description = "Rosy development for your R package.", # The Description of the package containing the App
-  author_first_name = "Brandon", # Your First Name
-  author_last_name = "Rose", # Your Last Name
-  author_email = "thecodingdocs@gmail.com", # Your Email
+  authors = person(
+    given = "Brandon", # Your First Name
+    family = "Rose", # Your Last Name
+    role = "cre",
+    email = "thecodingdocs@gmail.com" # Your Email
+  ),
   repo_url = paste0("https://github.com/brandonerose/",pkg_name), # The URL of the GitHub Repo (optional),
   pkg_version = utils::packageVersion(pkg_name)
 )
