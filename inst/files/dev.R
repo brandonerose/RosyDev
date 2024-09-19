@@ -4,18 +4,20 @@ Rosyverse::update_all()
 Rosyverse::load_all()
 RosyUtils::clear_env()
 # main =========================================================================
-(pkg_dir <- getwd())
-(pkg_name <- basename(pkg_dir))
-# devtools::load_all()
+pkg_dir <- getwd()
+pkg_name <- basename(pkg_dir)
+dev_dir <- file.path(pkg_dir,"dev")
+test_dir <- file.path(dev_dir,"test_dir")
+RosyUtils::view_file(pkg_name)
+# RosyUtils::view_file(dev_dir)
+# RosyUtils::view_file(test_dir)
 
 RosyDev::setup_RosyDev(
   overwrite = F, # be careful will overwrite certain files
   use_golem = F,
   launch_files = T
 )
-
 # delete_combined() # for when you pull a new update from github
-
 RosyDev::dev_update()
 
 RosyDev::fast_commit(
@@ -37,16 +39,15 @@ RosyDev::fast_commit(
 #other =========================================================================
 
 devtools::build_readme()
-
 usethis::use_version(which = "dev")
-
 devtools::check()
-
 devtools::build()
 
 #open files ====================================================================
 
-rstudioapi::filesPaneNavigate(getwd())
+RosyUtils::view_file(pkg_dir)
+RosyUtils::view_file(dev_dir)
+RosyUtils::view_file(test_dir)
 RosyDev::pkg_dev_nav_combined()
 RosyDev::pkg_dev_nav_dev()
 RosyDev::pkg_dev_nav_setup()

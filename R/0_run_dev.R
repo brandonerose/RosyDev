@@ -73,9 +73,12 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
   usethis:::check_is_package()
   usethis::use_pipe()
   pkg_dir <- getwd()
-  if( ! silent) message("pkg_dir: ",pkg_dir)
+  pkg_name <- basename(pkg_dir)
   dev_dir <- file.path(pkg_dir,"dev")
+  test_dir <- file.path(dev_dir,"test_dir")
+  if( ! silent) message("pkg_dir: ",pkg_dir)
   dir.create(dev_dir,showWarnings = F)
+  dir.create(test_dir,showWarnings = F)
   copy_these <- system.file(file.path("files",c("gitignore","Rbuildignore","setup.R","dev.R","test_dev.R","test_prod.R")),package = "RosyDev")
   paste_here <- c(
     file.path(pkg_dir,".gitignore"),
@@ -91,11 +94,20 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
       message("Already a file: ",paste_here[i])
       if(overwrite)message("overwritten!")
     }
-    file.copy(
+    was_copied <- file.copy(
       from = copy_these[i],
       to = paste_here[i],
       overwrite = overwrite
     )
+    if(was_copied){
+      if(basename(copy_these[i])=="test_prod.R"){
+        RosyUtils::replace_word_file(
+          file = paste_here[i],
+          pattern = "your_package_here",
+          replace = basename(pkg_dir)
+        )
+      }
+    }
   }
   if(overwrite||!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
   if(launch_files){
@@ -109,7 +121,7 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
       file.path(dev_dir,"test_prod.R")
     )
     for(file_path in file_paths){
-      view_file(file_path)
+      RosyUtils::view_file(file_path)
     }
   }
   if(use_golem){
@@ -184,18 +196,7 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
 #' @export
 delete_combined <- function(){
   if(!usethis:::is_package())stop("Your wd is not a package!")
-  delete_file(
+  RosyUtils::delete_file(
     path = file.path(getwd(),"dev","combined.R")
   )
-}
-delete_file <- function(path, silent = F){
-  its_there <- file.exists(path)
-  if(! its_there){
-    if(!silent)return(message("No file to delete: ",path))
-    return()
-  }
-  if(its_there){
-    deleted <- file.remove(path)
-    if(deleted&&!silent)return(message("File was deleted: ",path))
-  }
 }
