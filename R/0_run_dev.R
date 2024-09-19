@@ -129,9 +129,9 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
       file.path(pkg_dir,"NEWS.md"),
       file.path(dev_dir,"setup.R"),
       file.path(dev_dir,"dev.R"),
-      file.path(dev_dir,"combined.R"),
       file.path(dev_dir,"test_dev.R"),
-      file.path(dev_dir,"test_prod.R")
+      file.path(dev_dir,"test_prod.R"),
+      file.path(dev_dir,"combined.R")
     )
     for(file_path in file_paths){
       RosyUtils::view_file(file_path)
