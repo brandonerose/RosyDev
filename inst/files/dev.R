@@ -1,6 +1,6 @@
-.rs.restartR()
-remotes::install_github("brandonerose/Rosyverse")
-Rosyverse::update_all()
+# .rs.restartR()
+# remotes::install_github("brandonerose/Rosyverse")
+# Rosyverse::update_all()
 Rosyverse::load_all()
 RosyUtils::clear_env()
 # main =========================================================================
@@ -15,10 +15,11 @@ RosyUtils::view_file(pkg_dir)
 RosyDev::setup_RosyDev(
   overwrite = F, # be careful will overwrite certain files
   use_golem = F,
-  launch_files = T
+  launch_files = F
 )
 # delete_combined() # for when you pull a new update from github
 RosyDev::dev_update()
+RosyDev::pkg_dev_nav_combined()
 
 RosyDev::fast_commit(
   message = "dev",
@@ -42,6 +43,8 @@ devtools::build_readme()
 usethis::use_version(which = "dev")
 devtools::check()
 devtools::build()
+RosyDev::run_test_dev()
+RosyDev::run_test_prod()
 
 #open files ====================================================================
 
