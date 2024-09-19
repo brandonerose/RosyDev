@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# your_package_here <img src="man/figures/logo.png" align="right" height="200" />
+# RosyDev <img src="man/figures/logo.png" align="right" height="200" />
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -34,22 +34,22 @@ Rosyverse::load_all() #load all Rosyverse packages!
 
 If you have any issues above download the most recent version of R at RStudtio and update all packages in RStudio. See [thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
 
-## your_package_here Installation
+## RosyDev Installation
 
-your_package_here is designed to...
+RosyDev is designed to...
 
 ``` r
 # install remotes package if you don't have it
 # install.packages("remotes") 
-remotes::install_github("brandonerose/your_package_here")
+remotes::install_github("brandonerose/RosyDev")
 ```
 
-## your_package_here Example
+## RosyDev Example
 
-your_package_here can be use like this...
+RosyDev can be use like this...
 
 ``` r
-library("your_package_here")
+library("RosyDev")
 
 
 ```
@@ -63,8 +63,8 @@ library("your_package_here")
 
 ## Links
 
-The your_package_here package is at [github.com/brandonerose/your_package_here](https://github.com/brandonerose/your_package_here "your_package_here R package")
-See instructions above. Install remotes and install your_package_here
+The RosyDev package is at [github.com/brandonerose/RosyDev](https://github.com/brandonerose/RosyDev "RosyDev R package")
+See instructions above. Install remotes and install RosyDev
 
 Donate if I helped you out and want more development (anything helps)! [account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
 

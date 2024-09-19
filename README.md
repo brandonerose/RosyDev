@@ -9,45 +9,73 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of RosyDev is to …
+## Rosyverse
 
-## Installation
-
-You can install the development version of RosyDev like so:
-
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+Rosyverse is an evolving pre-CRAN set of packages maintained by Brandon
+Rose, MD, MPH. It is important to continue to run
+`Rosyverse::update_all()` while you are using this set of related
+packages. Please out if there are issues with installation,
+documentation, or packages.
 
 ``` r
-library(RosyDev)
-## basic example code
+# install remotes package if you don't have it
+# install.packages("remotes") 
+# install Rosyverse metapackage which has a function called `update_all()`
+remotes::install_github("brandonerose/Rosyverse")
+Rosyverse::update_all() # run update on all packages
+Rosyverse::load_all() #load all Rosyverse packages!
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+If you have any issues above download the most recent version of R at
+RStudtio and update all packages in RStudio. See
+[thecodingdocs.com/r/getting-started](https://www.thecodingdocs.com/r/getting-started "R Getting Started").
+
+## RosyDev Installation
+
+RosyDev is designed to…
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+# install remotes package if you don't have it
+# install.packages("remotes") 
+remotes::install_github("brandonerose/RosyDev")
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+## RosyDev Example
 
-You can also embed plots, for example:
+RosyDev can be use like this…
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+``` r
+library("RosyDev")
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+```
+
+## Future plans
+
+- Future versions will demonstrate more advanced features already
+  included!
+- Documentation needs to be updated
+- Need to add vignettes
+- Open to collaboration/feedback
+
+## Links
+
+The RosyDev package is at
+[github.com/brandonerose/RosyDev](https://github.com/brandonerose/RosyDev "RosyDev R package")
+See instructions above. Install remotes and install RosyDev
+
+Donate if I helped you out and want more development (anything helps)!
+[account.venmo.com/u/brandonerose](https://account.venmo.com/u/brandonerose "Venmo Donation")
+
+For more R coding visit
+[thecodingdocs.com/](https://www.thecodingdocs.com/ "TheCodingDocs.com")
+
+For correspondence/feedback/issues, please email
+<TheCodingDocs@gmail.com>!
+
+Follow us on Twitter
+[twitter.com/TheCodingDocs](https://twitter.com/TheCodingDocs "TheCodingDocs Twitter")
+
+Follow me on Twitter
+[twitter.com/BRoseMDMPH](https://twitter.com/BRoseMDMPH "BRoseMDMPH Twitter")
+
+[![TheCodingDocs.com](man/figures/TCD.png)](http://www.thecodingdocs.com)
