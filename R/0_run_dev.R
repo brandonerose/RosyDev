@@ -76,12 +76,14 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
   if( ! silent) message("pkg_dir: ",pkg_dir)
   dev_dir <- file.path(pkg_dir,"dev")
   dir.create(dev_dir,showWarnings = F)
-  copy_these <- system.file(file.path("files",c("gitignore","Rbuildignore","setup.R","dev.R")),package = "RosyDev")
+  copy_these <- system.file(file.path("files",c("gitignore","Rbuildignore","setup.R","dev.R","test_dev.R","test_prod.R")),package = "RosyDev")
   paste_here <- c(
     file.path(pkg_dir,".gitignore"),
     file.path(pkg_dir,".Rbuildignore"),
     file.path(dev_dir,"setup.R"),
-    file.path(dev_dir,"dev.R")
+    file.path(dev_dir,"dev.R"),
+    file.path(dev_dir,"test_dev.R"),
+    file.path(dev_dir,"test_prod.R")
   )
   for(i in 1:length(copy_these)){
     the_file_exisits <- file.exists(paste_here[i])
@@ -172,5 +174,26 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
         if(overwrite)message("overwritten!")
       }
     }
+  }
+}
+#' @title delete_combined
+#' @description copy minumim golem files to working directory
+#' @inheritParams setup_RosyDev
+#' @return files being copied if needed/wanted
+delete_combined <- function(){
+  if(!usethis:::is_package())stop("Your wd is not a package!")
+  delete_file(
+    path = file.path(getwd(),"dev","combined.R")
+  )
+}
+delete_file <- function(path, silent = F){
+  its_there <- file.exists(path)
+  if(! its_there){
+    if(!silent)return(message("No file to delete: ",path))
+    return()
+  }
+  if(its_there){
+    deleted <- file.remove(path)
+    if(deleted&&!silent)return(message("File was deleted: ",path))
   }
 }
