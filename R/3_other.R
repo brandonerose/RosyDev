@@ -63,3 +63,25 @@ check_namespace_conflicts<-function(pkgs){
   }
   return(y)
 }
+copy_logos_to_package <- function(copy_to = file.path("inst","app","www")){
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  pkg_name <- basename(pkg_dir)
+  named_list <- Rosyverse::get_logo_paths(name_vec = c(pkg_name,"Rosyverse","TCD","TCDblack","TCDclear"))
+  dir.create(copy_to,recursive = T,showWarnings = F)
+  for(i in 1:length(named_list)){
+    was_copied <- file.copy(
+      from = named_list[[i]],
+      to = file.path(copy_to,paste0(names(named_list[i]),".png")),
+      overwrite = F
+    )
+  }
+  logo_path <- file.path(copy_to,paste0(pkg_name,".png"))
+  if(file.exists(logo_path)){
+    file.copy(
+      from = logo_path,
+      to = file.path(copy_to,"logo.png"),
+      overwrite = F
+    )
+  }
+}

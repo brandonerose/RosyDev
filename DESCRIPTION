@@ -15,6 +15,7 @@ Imports:
     golem,
     magrittr,
     RosyUtils,
+    Rosyverse,
     rstudioapi,
     stringr,
     tools,

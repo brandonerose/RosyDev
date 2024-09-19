@@ -137,12 +137,16 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
       RosyUtils::view_file(file_path)
     }
   }
+  # copy_to <- file.path("man","figures")
+  copy_to <- file.path("inst","app","www")  #can fix this later
   if(use_golem){
     copy_golem_to_wd(
       overwrite = overwrite,
       silent = silent
     )
+    copy_to <- file.path("inst","app","www")
   }
+  copy_logos_to_package(copy_to = copy_to)
   message("RosyDev setup successful!")
 }
 #' @title Fast Commit
