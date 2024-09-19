@@ -167,7 +167,7 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     usethis::use_git(message = message)
   }
   if(push){
-    choice <- F
+    choice <- T
     if(ask){
       choice <- utils::menu(choices = c("Yes", "No"),title = "You are about to push to git based on what has been committed. Are you sure?")==1
     }
