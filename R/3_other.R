@@ -85,3 +85,16 @@ copy_logos_to_package <- function(copy_to = file.path("inst","app","www")){
     )
   }
 }
+#' @title run_test_prod
+#' @export
+run_test_prod <- function(){
+  source(file.path(getwd(),"dev","test_prod.R"))
+}
+#' @title run_test_dev
+#' @export
+run_test_dev <- function(){
+  source(file.path(getwd(),"dev","test_dev.R"))
+}
+run_test_prod <- function(){
+
+}
