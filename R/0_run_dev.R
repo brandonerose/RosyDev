@@ -177,10 +177,7 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     }
     url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist()
     # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
-    clickable_url_in_console(
-      url = url,
-      prefix = "Project info/code here:"
-    )
+    bullet_in_console("Project info/code here:",url = url)
   }
 }
 #' @title copy_golem_to_wd
