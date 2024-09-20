@@ -109,7 +109,6 @@ download_and_extract_source_R_files <- function(pkg) {
   return(was_downloaded)
 }
 #' @title pkg_combine_R_files
-#' @inheritParams source combine_R_files
 #' @param pkgs package name(s) as character string
 #' @param filename_type character string of type filename: "name__version" or "name"
 #' @return message
@@ -211,7 +210,6 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
   if(length(pkgs_missing)>0) message("Packages STILL missing: ",pkgs_missing %>% paste0(collapse = ", "))
 }
 #' @title pkg_combine_R_files_launch
-#' @inheritParams source combine_R_files
 #' @param pkgs package name(s) as character string
 #' @param filename_type character string of type filename: "name__version" or "name"
 #' @return message

@@ -159,7 +159,7 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev",launch_github = T){
+fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
   usethis::use_git(message = message)
   if(bump_version){
     usethis::use_version(which = which)
@@ -173,8 +173,13 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     }
     if(choice){
       usethis:::git_push()
-      if(launch_github)usethis::browse_github()
     }
+    url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist()
+    # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
+    clickable_url_in_console(
+      url = url,
+      prefix = "Project info/code here:"
+    )
   }
 }
 #' @title copy_golem_to_wd

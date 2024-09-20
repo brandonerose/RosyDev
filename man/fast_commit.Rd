@@ -9,8 +9,7 @@ fast_commit(
   push = F,
   ask = T,
   bump_version = F,
-  which = "dev",
-  launch_github = T
+  which = "dev"
 )
 }
 \arguments{
