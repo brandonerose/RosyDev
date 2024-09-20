@@ -175,7 +175,8 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     if(choice){
       usethis:::git_push()
     }
-    url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist()
+    url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist() %>%
+      as.character()#affects link name
     # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
     bullet_in_console("Project info/code here:",url = url)
   }
