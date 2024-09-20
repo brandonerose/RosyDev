@@ -1,3 +1,4 @@
+#' @import RosyUtils
 #' @title Update Dev
 #' @description Update package from combined.R by documenting and combining files again
 #' @param silent logical for messages
