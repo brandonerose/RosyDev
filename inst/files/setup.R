@@ -32,7 +32,8 @@ file.copy(
   overwrite = T
 )
 golem::use_favicon("inst/app/www/logo.png") # path = "path/to/ico". Can be an online file.
-# usethis::use_package("Rosy")
+# usethis::use_package("dplyr")
+# usethis::use_dev_package("RosyDev")
 usethis::use_git()
 #system("git branch -m master main")
 usethis::use_github(private = F)
