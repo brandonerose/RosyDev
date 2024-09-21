@@ -81,7 +81,7 @@ execute_with_tryCatch <- function(expr) {
 }
 download_and_extract_source_R_files <- function(pkg) {
   temp_dir <- tempdir()
-  installed_packages <- installed.packages() %>% as.data.frame()
+  installed_packages <- utils::installed.packages() %>% as.data.frame()
   is_base <- pkg %in% installed_packages$Package[which(installed_packages$Priority =="base")]
   if(is_base){
     r_version <- R.Version()
