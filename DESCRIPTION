@@ -16,12 +16,13 @@ Imports:
     magrittr,
     pkgload,
     RosyUtils (>= 1.0.0.9011),
+    Rosyverse,
     rstudioapi,
     stringr,
     tools,
     usethis,
     utils
-Remotes:  
+Remotes: 
     github::brandonerose/RosyUtils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

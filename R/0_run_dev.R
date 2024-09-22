@@ -35,6 +35,7 @@ dev_update <- function(silent = F,use_internal_pkg = T,is_production = F){
     pkg_date <- Sys.Date()
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
   }
+  show_clickable_devs()
 }
 #' @title add_to_sysdata
 #' @description Load sysdata.rda if it exists and add objects in `...` to it.
@@ -124,20 +125,7 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
     }
   }
   if(overwrite||!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
-  if(launch_files){
-    file_paths <- c(
-      file.path(pkg_dir,"README.Rmd"),
-      file.path(pkg_dir,"NEWS.md"),
-      file.path(dev_dir,"setup.R"),
-      file.path(dev_dir,"dev.R"),
-      file.path(dev_dir,"test_dev.R"),
-      file.path(dev_dir,"test_prod.R"),
-      file.path(dev_dir,"combined.R")
-    )
-    for(file_path in file_paths){
-      RosyUtils::view_file(file_path)
-    }
-  }
+  if(launch_files)launch_devs()
   # copy_to <- file.path("man","figures")
   copy_to <- file.path("inst","app","www")  #can fix this later
   if(use_golem){
@@ -148,7 +136,36 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
     copy_to <- file.path("inst","app","www")
   }
   copy_logos_to_package(copy_to = copy_to)
-  message("RosyDev setup successful!")
+  show_clickable_devs()
+}
+file_paths_dev <- function(){
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
+  return(
+    c(
+      file.path(dev_dir,"setup.R"),
+      file.path(pkg_dir,"README.Rmd"),
+      file.path(pkg_dir,"NEWS.md"),
+      file.path(dev_dir,"dev.R"),
+      file.path(dev_dir,"test_dev.R"),
+      file.path(dev_dir,"test_prod.R"),
+      file.path(dev_dir,"combined.R")
+    )
+  )
+}
+show_clickable_devs <- function(){
+  bullet_in_console("Click below to open dev files...")
+  for(file_path in file_paths_dev()){
+    names(file_path) <- basename(file_path)
+    bullet_in_console(file = file_path,bullet_type = ">")
+  }
+}
+launch_devs <- function(){
+  for(file_path in file_paths_dev()){
+    RosyUtils::view_file(file_path)
+  }
 }
 #' @title Fast Commit
 #' @description commit for git with one function

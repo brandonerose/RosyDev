@@ -95,3 +95,6 @@ run_test_prod <- function(){
 run_test_dev <- function(){
   source(file.path(getwd(),"dev","test_dev.R"))
 }
+run_test_prod <- function(){
+  source(file.path(getwd(),"dev","test_prod.R"))
+}
