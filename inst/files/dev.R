@@ -17,7 +17,7 @@ RosyDev::setup_RosyDev(
   use_golem = F,
   launch_files = F
 )
-# delete_combined() # for when you pull a new update from github
+# RosyDev::delete_combined() # for when you pull a new update from github
 RosyDev::dev_update()
 RosyDev::pkg_dev_nav_combined()
 
