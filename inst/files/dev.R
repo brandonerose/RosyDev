@@ -17,23 +17,33 @@ RosyDev::setup_RosyDev(
   use_golem = F,
   launch_files = F
 )
-# RosyDev::delete_combined() # for when you pull a new update from github
-RosyDev::dev_update()
 RosyDev::pkg_dev_nav_combined()
+# RosyDev::delete_combined() # for when you pull a new update from github
+
+# update and push ----------------------------------
+
+RosyDev::dev_update()
+RosyDev::fast_commit(
+  message = "dev",
+  push = T,
+  ask = F,
+  bump_version = F,
+  which = "dev"
+)
+
+# refresh packages ======================
+
+.rs.restartR()
+remotes::install_github("brandonerose/Rosyverse")
+Rosyverse::update_all()
+
+#  ============================================
 
 RosyDev::fast_commit(
   message = "dev",
   push = T,
   ask = T,
   bump_version = T,
-  which = "dev"
-)
-
-RosyDev::fast_commit(
-  message = "dev",
-  push = T,
-  ask = F,
-  bump_version = F,
   which = "dev"
 )
 
