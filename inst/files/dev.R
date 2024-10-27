@@ -33,9 +33,9 @@ RosyDev::fast_commit(
 
 # refresh packages ======================
 
-.rs.restartR()
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()
+.rs.restartR()
 
 #  ============================================
 
