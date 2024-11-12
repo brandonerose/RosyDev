@@ -4,7 +4,11 @@
 \alias{check_namespace_conflicts}
 \title{check_namespace_conflicts}
 \usage{
-check_namespace_conflicts(pkgs)
+check_namespace_conflicts(
+  pkgs,
+  ignores = c("\%>\%", "pkg_date", "pkg_version", "pkg_name", ".__NAMESPACE__.",
+    ".__S3MethodsTable__.", ".packageName")
+)
 }
 \arguments{
 \item{pkgs}{character vector of pkgs}

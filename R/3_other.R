@@ -1,7 +1,16 @@
 #' @title check_namespace_conflicts
 #' @param pkgs character vector of pkgs
 #' @export
-check_namespace_conflicts<-function(pkgs){
+check_namespace_conflicts<-function(pkgs,ignores = c(
+  "%>%",
+  "pkg_date",
+  "pkg_version",
+  "pkg_name",
+  ".__NAMESPACE__.",
+  ".__S3MethodsTable__.",
+  ".packageName"
+)
+){
   # pkgs <- pkgs %>% sort()
   x <- NULL
   for(pkg in pkgs){
@@ -26,6 +35,9 @@ check_namespace_conflicts<-function(pkgs){
   y <- data.frame(
     function_name = unique(x$name)
   )
+  if(is_something(ignores)){
+    y <- y[which(!y$function_name%in%ignores),]
+  }
   y$int_int_conflict <- y$function_name %>%  sapply(function(function_name){
     ROWS <- which(x$type%in%c("internal") & x$name == function_name)
     z <- x$pkg[ROWS] %>% unique()
