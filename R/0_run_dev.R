@@ -134,8 +134,8 @@ setup_RosyDev <- function(silent = F,launch_files = F,overwrite = F,use_golem = 
       silent = silent
     )
     copy_to <- file.path("inst","app","www")
+    copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
   }
-  copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
   show_clickable_devs()
 }
 file_paths_dev <- function(){
@@ -159,7 +159,7 @@ show_clickable_devs <- function(){
   bullet_in_console("Click below to open dev files...")
   for(file_path in file_paths_dev()){
     names(file_path) <- basename(file_path)
-    bullet_in_console(file = file_path,bullet_type = ">")
+    bullet_in_console(file = file_path,bullet_type = ifelse(file.exists(file_path), ">","x"))
   }
 }
 launch_devs <- function(){

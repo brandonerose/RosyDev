@@ -4,7 +4,13 @@
 \alias{setup_RosyDev}
 \title{Package System}
 \usage{
-setup_RosyDev(silent = F, launch_files = T, overwrite = F, use_golem = F)
+setup_RosyDev(
+  silent = F,
+  launch_files = F,
+  overwrite = F,
+  use_golem = F,
+  only_if_imported = T
+)
 }
 \arguments{
 \item{silent}{logical for messages}
