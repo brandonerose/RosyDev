@@ -63,11 +63,34 @@ check_namespace_conflicts<-function(pkgs){
   }
   return(y)
 }
-copy_logos_to_package <- function(copy_to = file.path("inst","app","www")){
+get_logo_paths <-function(){
+  logo_folder <- system.file("logos",package = "RosyDev")
+  logo_files <- logo_folder %>% list.files(full.names = T)
+  logo_files <- logo_files[which(endsWith(logo_files,".png"))]
+  allowed_names <- logo_files %>% basename() %>% tools::file_path_sans_ext() %>% gsub("hex-","",.)
+  named_list <- as.list(logo_files)
+  names(named_list) <- allowed_names
+  return(named_list)
+}
+get_imported_packages <- function(pkg_name) {
+  pkg_desc <- utils::packageDescription(pkg_name)
+  imports <- pkg_desc$Imports
+  if (!is.null(imports)) {
+    imports_vector <- gsub("\\s*\\(.*?\\)", "", strsplit(imports, ",")[[1]])
+    imports_vector <- trimws(imports_vector)
+  } else {
+    imports_vector <- character(0) # No imports
+  }
+  return(imports_vector)
+}
+copy_logos_to_package <- function(copy_to = file.path("inst","app","www"),only_if_imported = T){
   usethis:::check_is_package()
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
-  named_list <- Rosyverse::get_logo_paths(name_vec = c(pkg_name,"Rosyverse","TCD","TCDblack","TCDclear"))
+  named_list <- get_logo_paths()
+  if(only_if_imported){
+    named_list <- named_list[which(!startsWith(names(named_list),"Rosy")|(startsWith(names(named_list),"Rosy")&names(named_list)%in%get_imported_packages(pkg_name)))]
+  }
   dir.create(copy_to,recursive = T,showWarnings = F)
   for(i in 1:length(named_list)){
     was_copied <- file.copy(

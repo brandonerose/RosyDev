@@ -71,7 +71,7 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
 #' @param use_golem logical for using golem
 #' @return path
 #' @export
-setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = F){
+setup_RosyDev <- function(silent = F,launch_files = F,overwrite = F,use_golem = F,only_if_imported = T){
   usethis:::check_is_package()
   usethis::use_pipe()
   pkg_dir <- getwd()
@@ -135,7 +135,7 @@ setup_RosyDev <- function(silent = F,launch_files = T,overwrite = F,use_golem = 
     )
     copy_to <- file.path("inst","app","www")
   }
-  copy_logos_to_package(copy_to = copy_to)
+  copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
   show_clickable_devs()
 }
 file_paths_dev <- function(){
