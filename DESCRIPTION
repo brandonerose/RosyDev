@@ -15,7 +15,7 @@ Imports:
     golem,
     magrittr,
     pkgload,
-    RosyUtils (>= 1.0.0.9011),
+    RosyUtils,
     Rosyverse,
     rstudioapi,
     stringr,
