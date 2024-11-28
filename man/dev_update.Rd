@@ -4,7 +4,7 @@
 \alias{dev_update}
 \title{Update Dev}
 \usage{
-dev_update(silent = F, use_internal_pkg = T, is_production = F)
+dev_update(silent = F, use_internal_pkg = T, is_production = F, overwrite = F)
 }
 \arguments{
 \item{silent}{logical for messages}

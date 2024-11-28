@@ -4,14 +4,15 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(silent = F,use_internal_pkg = T,is_production = F){
+dev_update <- function(silent = F,use_internal_pkg = T,is_production = F,overwrite = F){
   usethis:::check_is_package()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
   pkg_name <- basename(pkg_dir)
   if( ! silent) message("pkg_name: ",pkg_name)
-  if(!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
-  # golem::set_golem_name(pkg_name)
+  if( ! file.exists(file.path(pkg_dir,"dev","combined.R")) || overwrite){
+    combine_R_files()
+  }
   split_R_files()
   devtools::document()
   attachment::att_amend_desc()

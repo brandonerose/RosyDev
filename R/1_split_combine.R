@@ -36,7 +36,7 @@ combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir
   destination_file <- file.path(destination_dir, filename)
   if(!file.exists(destination_file)||overwrite){
     writeLines(combined_text, destination_file)
-    cat("Combined file saved to:", destination_file, "\n")
+    bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
   }
 }
 #' @title split_R_files
