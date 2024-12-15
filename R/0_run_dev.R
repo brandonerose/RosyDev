@@ -28,6 +28,16 @@ dev_update <- function(silent = F,use_internal_pkg = T,is_production = F,overwri
     golem::amend_golem_config(key = "app_prod", is_production,talkative = F)
     options("golem.app.prod" = is_production)
   }
+  if(file.exists("README.Rmd")){
+    devtools::build_readme()
+  }
+  if(file.exists("vignettes")){
+    test_for_vig <- list.files("vignettes") %>% tools::file_ext()
+    test_for_vig <- "Rmd"%in% test_for_vig
+    if(test_for_vig){
+      devtools::build_vignettes()
+    }
+  }
   if(use_internal_pkg){
     pkg_date <- Sys.Date()
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
