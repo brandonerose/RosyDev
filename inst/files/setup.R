@@ -37,3 +37,10 @@ golem::use_favicon("inst/app/www/logo.png") # path = "path/to/ico". Can be an on
 usethis::use_git()
 #system("git branch -m master main")
 usethis::use_github(private = F)
+RosyDev::setup_RosyDev(
+  overwrite = T, # be careful will overwrite certain files
+  use_golem = T,
+  launch_files = T
+)
+
+usethis::use_pkgdown_github_pages()

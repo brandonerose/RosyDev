@@ -4,7 +4,12 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(silent = F,use_internal_pkg = T,is_production = F,overwrite = F){
+dev_update <- function(
+    silent = F,
+    use_internal_pkg = T,
+    is_production = F,
+    overwrite = F
+){
   usethis:::check_is_package()
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
@@ -28,15 +33,69 @@ dev_update <- function(silent = F,use_internal_pkg = T,is_production = F,overwri
     golem::amend_golem_config(key = "app_prod", is_production,talkative = F)
     options("golem.app.prod" = is_production)
   }
+  due_for_update <- T
+  check_for_update <- file.exists("dev/update_log.csv")
+  update_log <- data.frame(file = character(0),mtime= character(0))
+  if(check_for_update){
+    update_log <-read.csv("dev/update_log.csv")
+  }
+  any_updates <- F
   if(file.exists("README.Rmd")){
-    devtools::build_readme()
+    ref_file <- "README.Rmd"
+    do_it <- T
+    if(check_for_update){
+      if(any(update_log$file==ref_file)){
+        do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+      }
+    }
+    if(do_it){
+      devtools::build_readme()
+      update_log <- update_log[which(update_log$file!=ref_file),] %>%
+        rbind(
+          data.frame(
+            file = ref_file,
+            mtime =file.info(ref_file)$mtime %>% as.character()
+          )
+        )
+      any_updates <- T
+    }
   }
   if(file.exists("vignettes")){
+    ref_file <- "vignettes"
     test_for_vig <- list.files("vignettes") %>% tools::file_ext()
     test_for_vig <- "Rmd"%in% test_for_vig
     if(test_for_vig){
-      devtools::build_vignettes()
+      do_it <- T
+      if(check_for_update){
+        if(any(update_log$file==ref_file)){
+          do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+        }
+      }
+      if(do_it){
+        devtools::build_vignettes()
+        update_log <- update_log[which(update_log$file!=ref_file),] %>%
+          rbind(
+            data.frame(
+              file = ref_file,
+              mtime =file.info(ref_file)$mtime %>% as.character()
+            )
+          )
+        any_updates <- T
+      }
     }
+  }
+  if(file.exists("pkgdown")){
+    ref_file <- "pkgdown"
+    do_it <- T
+    if(check_for_update){
+      do_it <- any_updates
+    }
+    if(do_it){
+      pkgdown::build_site_github_pages()
+    }
+  }
+  if(any_updates){
+    write.csv(update_log,"dev/update_log.csv",row.names = F)
   }
   if(use_internal_pkg){
     pkg_date <- Sys.Date()
@@ -78,7 +137,13 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
 #' @param use_golem logical for using golem
 #' @return path
 #' @export
-setup_RosyDev <- function(silent = F,launch_files = F,overwrite = F,use_golem = F,only_if_imported = T){
+setup_RosyDev <- function(
+    silent = F,
+    launch_files = F,
+    overwrite = F,
+    use_golem = F,
+    only_if_imported = T
+){
   usethis:::check_is_package()
   usethis::use_pipe()
   pkg_dir <- getwd()
@@ -143,6 +208,15 @@ setup_RosyDev <- function(silent = F,launch_files = F,overwrite = F,use_golem = 
     copy_to <- file.path("inst","app","www")
     copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
   }
+  # if(use_pkgdown){ # would have to have github setup already... so hold for now
+  #   do_it <- T
+  #   if(file.exists("pkgdown")){
+  #     do_it <- utils::menu(choices = c("Yes", "No"),title = "You are about to run `usethis::use_pkgdown_github_pages()` but it already pkgdown folder already exists. Are you sure?")==1
+  #     if(do_it){
+  #       usethis::use_pkgdown_github_pages()
+  #     }
+  #   }
+  # }
   show_clickable_devs()
 }
 file_paths_dev <- function(){
