@@ -1,8 +1,13 @@
-# Refresh ======================================================================
+# refresh packages =============================================================
+remotes::install_github("brandonerose/Rosyverse")
+Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
 .rs.restartR()
-Rosyverse::update_all() # remotes::install_github("brandonerose/Rosyverse")
-Rosyverse::load_all()
+# LOAD =========================================================================
 RosyUtils::clear_env()
+Rosyverse::load_all()
+# pull first =========================
+usethis:::git_pull()
+RosyDev::delete_combined() # for when you pull a new update from github
 # Setup ========================================================================
 pkg_dir <- getwd()
 pkg_name <- basename(pkg_dir)
@@ -16,15 +21,7 @@ RosyDev::setup_RosyDev(
   use_golem = F,
   launch_files = T
 )
-
-# pull first =========================
-usethis:::git_pull()
-
-RosyDev::delete_combined() # for when you pull a new update from github
-
-
 # update and push ----------------------------------
-
 RosyDev::dev_update()
 RosyDev::fast_commit(
   message = "dev",
@@ -33,16 +30,7 @@ RosyDev::fast_commit(
   bump_version = F,
   which = "dev"
 )
-RosyDev::pkg_dev_nav_combined()
-
-# refresh packages ======================
-
-remotes::install_github("brandonerose/Rosyverse")
-Rosyverse::update_all()
-.rs.restartR()
-
 # bump version update and push  ================================================
-
 RosyDev::fast_commit(
   message = "dev",
   push = T,
