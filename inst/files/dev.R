@@ -38,7 +38,6 @@ RosyDev::fast_commit(
   bump_version = T,
   which = "dev"
 )
-
 #other =========================================================================
 
 devtools::build_readme()

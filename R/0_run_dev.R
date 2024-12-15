@@ -261,9 +261,7 @@ launch_devs <- function(){
 fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
   usethis::use_git(message = message)
   if(bump_version){
-    usethis::use_version(which = which)
-    dev_update()
-    usethis::use_git(message = message)
+    bump_version(which = which,message = message)
   }
   if(push){
     choice <- T
@@ -278,6 +276,17 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
     # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
     bullet_in_console("Project info/code here:",url = url)
   }
+}
+#' @title bump_version
+#' @description bump version
+#' @param message character string for commit message
+#' @inheritParams usethis::use_version
+#' @return bump
+#' @export
+bump_version <- function(which = "dev",message= "dev"){
+  usethis::use_version(which = which)
+  dev_update()
+  usethis::use_git(message = message)
 }
 #' @title copy_golem_to_wd
 #' @description copy minimum golem files to working directory
