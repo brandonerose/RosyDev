@@ -75,6 +75,12 @@ check_namespace_conflicts<-function(pkgs,ignores = c(
   }
   return(y)
 }
+get_external_functions <- function(pkg){
+  ls(paste0("package:",pkg))
+}
+get_all_functions <- function(pkg){
+  ls(getNamespace(pkg))
+}
 get_logo_paths <-function(){
   logo_folder <- system.file("logos",package = "RosyDev")
   logo_files <- logo_folder %>% list.files(full.names = T)
