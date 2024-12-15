@@ -42,6 +42,7 @@ RosyDev::fast_commit(
 
 devtools::build_readme()
 usethis::use_version(which = "dev")
+pkgdown::build_site_github_pages()
 devtools::check()
 devtools::build()
 RosyDev::run_test_dev()
