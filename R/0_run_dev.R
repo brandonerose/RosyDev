@@ -23,13 +23,9 @@ dev_update <- function(silent = F,use_internal_pkg = T,is_production = F,overwri
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
     copy_golem_to_wd()
-    golem::set_golem_options(
-      golem_name = pkg_name,
-      golem_version = pkg_version,
-      golem_wd = pkg_dir,
-      talkative = F,
-      app_prod = is_production
-    )
+    golem::amend_golem_config(key = "golem_name", value = pkg_name,talkative = F)
+    golem::amend_golem_config(key = "golem_version", value = pkg_version,talkative = F)
+    golem::amend_golem_config(key = "app_prod", is_production,talkative = F)
     options("golem.app.prod" = is_production)
   }
   if(use_internal_pkg){
