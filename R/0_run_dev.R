@@ -8,7 +8,8 @@ dev_update <- function(
     silent = F,
     use_internal_pkg = T,
     is_production = F,
-    overwrite = F
+    overwrite = F,
+    document = T
 ){
   usethis:::check_is_package()
   pkg_dir <- getwd()
@@ -40,31 +41,9 @@ dev_update <- function(
     update_log <-read.csv("dev/update_log.csv")
   }
   any_updates <- F
-  if(file.exists("README.Rmd")){
-    ref_file <- "README.Rmd"
-    do_it <- T
-    if(check_for_update){
-      if(any(update_log$file==ref_file)){
-        do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
-      }
-    }
-    if(do_it){
-      devtools::build_readme()
-      update_log <- update_log[which(update_log$file!=ref_file),] %>%
-        rbind(
-          data.frame(
-            file = ref_file,
-            mtime =file.info(ref_file)$mtime %>% as.character()
-          )
-        )
-      any_updates <- T
-    }
-  }
-  if(file.exists("vignettes")){
-    ref_file <- "vignettes"
-    test_for_vig <- list.files("vignettes") %>% tools::file_ext()
-    test_for_vig <- "Rmd"%in% test_for_vig
-    if(test_for_vig){
+  if(document){
+    if(file.exists("README.Rmd")){
+      ref_file <- "README.Rmd"
       do_it <- T
       if(check_for_update){
         if(any(update_log$file==ref_file)){
@@ -72,7 +51,7 @@ dev_update <- function(
         }
       }
       if(do_it){
-        devtools::build_vignettes()
+        devtools::build_readme()
         update_log <- update_log[which(update_log$file!=ref_file),] %>%
           rbind(
             data.frame(
@@ -83,19 +62,43 @@ dev_update <- function(
         any_updates <- T
       }
     }
-  }
-  if(file.exists("pkgdown")){
-    ref_file <- "pkgdown"
-    do_it <- T
-    if(check_for_update){
-      do_it <- any_updates
+    if(file.exists("vignettes")){
+      ref_file <- "vignettes"
+      test_for_vig <- list.files("vignettes") %>% tools::file_ext()
+      test_for_vig <- "Rmd"%in% test_for_vig
+      if(test_for_vig){
+        do_it <- T
+        if(check_for_update){
+          if(any(update_log$file==ref_file)){
+            do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+          }
+        }
+        if(do_it){
+          devtools::build_vignettes()
+          update_log <- update_log[which(update_log$file!=ref_file),] %>%
+            rbind(
+              data.frame(
+                file = ref_file,
+                mtime =file.info(ref_file)$mtime %>% as.character()
+              )
+            )
+          any_updates <- T
+        }
+      }
     }
-    if(do_it){
-      pkgdown::build_site_github_pages()
+    if(file.exists("pkgdown")){
+      ref_file <- "pkgdown"
+      do_it <- T
+      if(check_for_update){
+        do_it <- any_updates
+      }
+      if(do_it){
+        pkgdown::build_site_github_pages()
+      }
     }
-  }
-  if(any_updates){
-    write.csv(update_log,"dev/update_log.csv",row.names = F)
+    if(any_updates){
+      write.csv(update_log,"dev/update_log.csv",row.names = F)
+    }
   }
   if(use_internal_pkg){
     pkg_date <- Sys.Date()
