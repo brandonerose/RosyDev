@@ -75,9 +75,15 @@ check_namespace_conflicts<-function(pkgs,ignores = c(
   }
   return(y)
 }
+#' @title get_external_functions
+#' @param pkg character vector of pkg
+#' @export
 get_external_functions <- function(pkg){
   ls(paste0("package:",pkg))
 }
+#' @title get_all_functions
+#' @param pkg character vector of pkg
+#' @export
 get_all_functions <- function(pkg){
   ls(getNamespace(pkg))
 }
