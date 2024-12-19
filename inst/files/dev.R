@@ -21,10 +21,11 @@ RosyDev::setup_RosyDev(
   use_golem = F,
   launch_files = T
 )
-# update and push ----------------------------------
-RosyDev::dev_update()
+# document =====================================================================
 RosyDev::bump_version(which = "dev")
 RosyDev::dev_document()
+# update and push ==============================================================
+RosyDev::dev_update()
 RosyDev::fast_commit(
   message = "dev",
   push = T
