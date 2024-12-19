@@ -8,8 +8,7 @@ dev_update <- function(
     silent = F,
     use_internal_pkg = T,
     is_production = F,
-    overwrite = F,
-    document = T
+    overwrite = F
 ){
   usethis:::check_is_package()
   pkg_dir <- getwd()
@@ -68,12 +67,14 @@ dev_update <- function(
       }
     }
   }
-  if(due_for_update&&document) dev_document()
   if(use_internal_pkg){
     pkg_date <- Sys.Date()
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
   }
   show_clickable_devs()
+  if(due_for_update){
+    bullet_in_console("Due for documentation update: `dev_document()`")
+  }
 }
 #' @title dev_document
 #' @description document
