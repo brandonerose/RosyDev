@@ -31,7 +31,7 @@ RosyDev::fast_commit(
   which = "dev"
 )
 # update document and push ----------------------------------
-RosyDev::dev_update(document = T)
+RosyDev::dev_update()
 RosyDev::fast_commit(
   message = "dev",
   push = T,

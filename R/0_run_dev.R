@@ -34,16 +34,29 @@ dev_update <- function(
     golem::amend_golem_config(key = "app_prod", is_production,talkative = F)
     options("golem.app.prod" = is_production)
   }
-  due_for_update <- T
   check_for_update <- file.exists("dev/update_log.csv")
   update_log <- data.frame(file = character(0),mtime= character(0))
   if(check_for_update){
     update_log <-read.csv("dev/update_log.csv")
   }
-  any_updates <- F
-  if(document){
-    if(file.exists("README.Rmd")){
-      ref_file <- "README.Rmd"
+  due_for_update <- F
+  if(file.exists("README.Rmd")){
+    ref_file <- "README.Rmd"
+    do_it <- T
+    if(check_for_update){
+      if(any(update_log$file==ref_file)){
+        do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+      }
+    }
+    if(do_it){
+      due_for_update <- T
+    }
+  }
+  if(file.exists("vignettes")){
+    ref_file <- "vignettes"
+    test_for_vig <- list.files("vignettes") %>% tools::file_ext()
+    test_for_vig <- "Rmd"%in% test_for_vig
+    if(test_for_vig){
       do_it <- T
       if(check_for_update){
         if(any(update_log$file==ref_file)){
@@ -51,7 +64,61 @@ dev_update <- function(
         }
       }
       if(do_it){
-        devtools::build_readme()
+        due_for_update <- T
+      }
+    }
+  }
+  if(due_for_update&&document) dev_document()
+  if(use_internal_pkg){
+    pkg_date <- Sys.Date()
+    add_to_sysdata(pkg_name,pkg_version,pkg_date)
+  }
+  show_clickable_devs()
+}
+#' @title dev_document
+#' @description document
+#' @return message
+#' @export
+dev_document <- function(force = F){
+  check_for_update <- file.exists("dev/update_log.csv")
+  update_log <- data.frame(file = character(0),mtime= character(0))
+  if(check_for_update){
+    update_log <-read.csv("dev/update_log.csv")
+  }
+  any_updates <- F
+  if(file.exists("README.Rmd")){
+    ref_file <- "README.Rmd"
+    do_it <- T
+    if(check_for_update){
+      if(any(update_log$file==ref_file)){
+        do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+      }
+    }
+    if(do_it||force){
+      devtools::build_readme()
+      update_log <- update_log[which(update_log$file!=ref_file),] %>%
+        rbind(
+          data.frame(
+            file = ref_file,
+            mtime =file.info(ref_file)$mtime %>% as.character()
+          )
+        )
+      any_updates <- T
+    }
+  }
+  if(file.exists("vignettes")){
+    ref_file <- "vignettes"
+    test_for_vig <- list.files("vignettes") %>% tools::file_ext()
+    test_for_vig <- "Rmd"%in% test_for_vig
+    if(test_for_vig){
+      do_it <- T
+      if(check_for_update){
+        if(any(update_log$file==ref_file)){
+          do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
+        }
+      }
+      if(do_it||force){
+        devtools::build_vignettes()
         update_log <- update_log[which(update_log$file!=ref_file),] %>%
           rbind(
             data.frame(
@@ -62,49 +129,20 @@ dev_update <- function(
         any_updates <- T
       }
     }
-    if(file.exists("vignettes")){
-      ref_file <- "vignettes"
-      test_for_vig <- list.files("vignettes") %>% tools::file_ext()
-      test_for_vig <- "Rmd"%in% test_for_vig
-      if(test_for_vig){
-        do_it <- T
-        if(check_for_update){
-          if(any(update_log$file==ref_file)){
-            do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
-          }
-        }
-        if(do_it){
-          devtools::build_vignettes()
-          update_log <- update_log[which(update_log$file!=ref_file),] %>%
-            rbind(
-              data.frame(
-                file = ref_file,
-                mtime =file.info(ref_file)$mtime %>% as.character()
-              )
-            )
-          any_updates <- T
-        }
-      }
+  }
+  if(file.exists("pkgdown")){
+    ref_file <- "pkgdown"
+    do_it <- T
+    if(check_for_update){
+      do_it <- any_updates
     }
-    if(file.exists("pkgdown")){
-      ref_file <- "pkgdown"
-      do_it <- T
-      if(check_for_update){
-        do_it <- any_updates
-      }
-      if(do_it){
-        pkgdown::build_site_github_pages()
-      }
-    }
-    if(any_updates){
-      write.csv(update_log,"dev/update_log.csv",row.names = F)
+    if(do_it||force){
+      pkgdown::build_site_github_pages()
     }
   }
-  if(use_internal_pkg){
-    pkg_date <- Sys.Date()
-    add_to_sysdata(pkg_name,pkg_version,pkg_date)
+  if(any_updates||force){
+    write.csv(update_log,"dev/update_log.csv",row.names = F)
   }
-  show_clickable_devs()
 }
 #' @title add_to_sysdata
 #' @description Load sysdata.rda if it exists and add objects in `...` to it.
@@ -262,10 +300,10 @@ launch_devs <- function(){
 #' @return commited git
 #' @export
 fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
-  usethis::use_git(message = message)
   if(bump_version){
-    bump_version(which = which,message = message)
+    bump_version(which = which)
   }
+  usethis::use_git(message = message)
   if(push){
     choice <- T
     if(ask){
@@ -286,10 +324,9 @@ fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, whi
 #' @inheritParams usethis::use_version
 #' @return bump
 #' @export
-bump_version <- function(which = "dev",message= "dev"){
+bump_version <- function(which = "dev"){
   usethis::use_version(which = which)
   dev_update()
-  usethis::use_git(message = message)
 }
 #' @title copy_golem_to_wd
 #' @description copy minimum golem files to working directory

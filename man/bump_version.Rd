@@ -4,7 +4,7 @@
 \alias{bump_version}
 \title{bump_version}
 \usage{
-bump_version(which = "dev", message = "dev")
+bump_version(which = "dev")
 }
 \arguments{
 \item{which}{A string specifying which level to increment, one of: "major",
