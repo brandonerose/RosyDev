@@ -22,30 +22,12 @@ RosyDev::setup_RosyDev(
   launch_files = T
 )
 # update and push ----------------------------------
-RosyDev::dev_update(document = F)
-RosyDev::fast_commit(
-  message = "dev",
-  push = T,
-  ask = F,
-  bump_version = F,
-  which = "dev"
-)
-# update document and push ----------------------------------
 RosyDev::dev_update()
+RosyDev::bump_version(which = "dev")
+RosyDev::dev_document()
 RosyDev::fast_commit(
   message = "dev",
-  push = T,
-  ask = F,
-  bump_version = F,
-  which = "dev"
-)
-# bump version update and push  ================================================
-RosyDev::fast_commit(
-  message = "dev",
-  push = T,
-  ask = T,
-  bump_version = T,
-  which = "dev"
+  push = T
 )
 #other =========================================================================
 

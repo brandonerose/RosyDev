@@ -291,31 +291,28 @@ launch_devs <- function(){
 }
 #' @title Fast Commit
 #' @description commit for git with one function
-#' @param message character string for commit message
-#' @param push logical for git push. Also see `ask`.
-#' @param ask logical for asking before final git push
-#' @param bump_version logical for bumping version. Will also run `dev_update` again. See `which.`
-#' @param launch_github logical for opening the github in your browser
+#' @inheritParams usethis::use_git
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = F,ask = T, bump_version = F, which = "dev"){
-  if(bump_version){
-    bump_version(which = which)
-  }
+fast_commit <- function(message = "dev", push = F){
   usethis::use_git(message = message)
   if(push){
-    choice <- T
-    if(ask){
-      choice <- utils::menu(choices = c("Yes", "No"),title = "You are about to push to git based on what has been committed. Are you sure?")==1
-    }
-    if(choice){
-      usethis:::git_push()
-    }
+    usethis:::git_push()
     url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist() %>%
       as.character()#affects link name
     # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
-    bullet_in_console("Project info/code here:",url = url)
+    if(length(url)>0){
+      i <- 1
+      blank <- "......................."
+      mesge <- "Project info/code here:"
+      for(u in url){
+        bullet_in_console(ifelse(i==1,mesge,blank),url = u)
+        i <- i+1
+      }
+    }else{
+      bullet_in_console("Project info/code here:",file = getwd())
+    }
   }
 }
 #' @title bump_version
