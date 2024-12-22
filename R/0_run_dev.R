@@ -73,7 +73,7 @@ dev_update <- function(
   }
   show_clickable_devs()
   if(due_for_update){
-    bullet_in_console("Due for documentation update: `dev_document()`")
+    bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
   }
 }
 #' @title dev_document
