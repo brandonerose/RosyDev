@@ -300,9 +300,8 @@ fast_commit <- function(message = "dev", push = F){
   usethis::use_git(message = message)
   if(push){
     usethis:::git_push()
-    url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(", ") %>% unlist() %>%
-      as.character()#affects link name
-    # url <- utils::packageDescription("cli")[["URL"]] %>% strsplit(", ") %>% unlist() # for public packages
+    url <- pkgload::pkg_desc()[["get"]]("URL") %>% strsplit(",") %>% unlist()
+    url <- gsub("\n","",url) %>% trimws() %>% as.character()#affects link name
     if(length(url)>0){
       i <- 1
       blank <- "......................."
