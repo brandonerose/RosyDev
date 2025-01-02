@@ -12,6 +12,7 @@ Depends:
 Imports: 
     attachment,
     devtools,
+    dplyr,
     golem,
     magrittr,
     pkgdown,

@@ -2,10 +2,10 @@
 % Please edit documentation in R/3_other.R
 \name{dev_show_duplicated_functions}
 \alias{dev_show_duplicated_functions}
-\title{extract_function_definitions}
+\title{dev_show_duplicated_functions}
 \usage{
 dev_show_duplicated_functions()
 }
 \description{
-extract_function_definitions
+dev_show_duplicated_functions
 }

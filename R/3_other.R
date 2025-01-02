@@ -153,7 +153,7 @@ extract_function_definitions <- function(file) {
   })
   return(unlist(names[!sapply(names, is.null)]))
 }
-#' @title extract_function_definitions
+#' @title dev_show_functions
 #' @export
 dev_show_functions <- function() {
   files <- "dev/combined.R"
@@ -163,11 +163,26 @@ dev_show_functions <- function() {
   all_functions <- unlist(lapply(files, extract_function_definitions))
   return(all_functions)
 }
-#' @title extract_function_definitions
+#' @title dev_show_duplicated_functions
 #' @export
 dev_show_duplicated_functions <- function() {
   all_functions <- dev_show_functions()
   all_functions <- all_functions[which(duplicated(all_functions))] %>% unique() %>% sort(decreasing = T)
   if(length(all_functions)==0)bullet_in_console("No duplicated functions", bullet_type = "v")
   return(all_functions)
+}
+#' @title dev_function_freq
+#' @export
+dev_function_freq <- function(){
+  files <- "dev/combined.R"
+  if(!file.exists(files)){
+    files <- list.files(file.path("R"), pattern = "\\.R$", full.names = TRUE)
+  }
+  get_function_freq <- function(file){
+    tmp <- getParseData(parse(file, keep.source=TRUE))
+    tmp <- tmp %>% dplyr::filter(token=="SYMBOL_FUNCTION_CALL")
+    return(tmp$text)
+  }
+  all_functions <- unlist(lapply(files, get_function_freq))
+  all_functions %>% table() %>% sort(decreasing = T) %>% data.frame() %>% return()
 }
