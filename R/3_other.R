@@ -142,6 +142,32 @@ run_test_prod <- function(){
 run_test_dev <- function(){
   source(file.path(getwd(),"dev","test_dev.R"))
 }
-run_test_prod <- function(){
-  source(file.path(getwd(),"dev","test_prod.R"))
+#' @title extract_function_definitions
+#' @export
+extract_function_definitions <- function(file) {
+  parsed <- parse(file)
+  names <- sapply(parsed, function(x) if (is.call(x) && identical(x[[1]], as.name("<-"))) {
+    as.character(x[[2]])
+  } else {
+    NULL
+  })
+  return(unlist(names[!sapply(names, is.null)]))
+}
+#' @title extract_function_definitions
+#' @export
+dev_show_functions <- function() {
+  files <- "dev/combined.R"
+  if(!file.exists(files)){
+    files <- list.files(file.path("R"), pattern = "\\.R$", full.names = TRUE)
+  }
+  all_functions <- unlist(lapply(files, extract_function_definitions))
+  return(all_functions)
+}
+#' @title extract_function_definitions
+#' @export
+dev_show_duplicated_functions <- function() {
+  all_functions <- dev_show_functions()
+  all_functions <- all_functions[which(duplicated(all_functions))] %>% unique() %>% sort(decreasing = T)
+  if(length(all_functions)==0)bullet_in_console("No duplicated functions", bullet_type = "v")
+  return(all_functions)
 }
