@@ -55,7 +55,12 @@ split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=
     }else{
       end_index <- split_indices[[2]]-1
     }
-    scripts[[gsub(paste0("#| |",header_symbol), "", file_content[split_indices[[1]]])]] <- file_content[start_index:end_index]
+    if(start_index>end_index){
+      out_lines <- ""
+    }else{
+      out_lines <- file_content[start_index:end_index]
+    }
+    scripts[[gsub(paste0("#| |",header_symbol), "", file_content[split_indices[[1]]])]] <- out_lines
     split_indices[[1]] <- NULL
   }
   for(i in seq_along(scripts)){
