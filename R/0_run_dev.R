@@ -393,3 +393,13 @@ delete_combined <- function(){
     path = file.path(getwd(),"dev","combined.R")
   )
 }
+#' @title delete_combined_tests
+#' @description delete tests.R file in dev for when you pull a new update from github
+#' @return message
+#' @export
+delete_combined_tests <- function(){
+  if(!usethis:::is_package())stop("Your wd is not a package!")
+  RosyUtils::delete_file(
+    path = file.path(getwd(),"dev","tests.R")
+  )
+}
