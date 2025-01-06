@@ -14,17 +14,40 @@ dev_update <- function(
   pkg_dir <- getwd()
   if( ! silent) message("pkg_dir: ",pkg_dir)
   pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
   if( ! silent) message("pkg_name: ",pkg_name)
-  if( ! file.exists(file.path(pkg_dir,"dev","combined.R")) || overwrite){
+  if( ! file.exists(file.path(dev_dir,"combined.R")) || overwrite){
     combine_R_files()
   }
+  expected_test_folder <- file.path(pkg_dir,"tests","testthat")
+  if( ! file.exists(file.path(dev_dir,"tests.R")) || overwrite){
+    if(file.exists(expected_test_folder)){
+      combine_R_files(
+        source_dir = expected_test_folder,
+        filename = "tests.R"
+      )
+    }
+  }
   split_R_files()
+  if(file.exists(expected_test_folder)&&file.exists(file.path(dev_dir,"tests.R"))){
+    split_R_files(
+      source_dir = dev_dir,
+      destination_dir = expected_test_folder,
+      filename = "tests.R"
+    )
+  }
   devtools::document()
   attachment::att_amend_desc()
   golem::detach_all_attached()
   # devtools::unload()
   devtools::load_all()
   combine_R_files()
+  if(file.exists(expected_test_folder)){
+    combine_R_files(
+      source_dir = expected_test_folder,
+      filename = "tests.R"
+    )
+  }
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
     copy_golem_to_wd()
@@ -72,6 +95,7 @@ dev_update <- function(
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
   }
   show_clickable_devs()
+  write.csv(update_log,file = "dev/update_log.csv",row.names = F)
   if(due_for_update){
     bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
   }

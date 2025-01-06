@@ -27,7 +27,7 @@ RosyDev::dev_document()
 # update and push ==============================================================
 RosyDev::dev_update()
 RosyDev::fast_commit(
-  message = "dev",
+  message = "add tests file",
   push = T
 )
 #other =========================================================================
