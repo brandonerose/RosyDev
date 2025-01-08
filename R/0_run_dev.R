@@ -155,7 +155,7 @@ dev_document <- function(pkgdown = F,force = F){
       }
     }
   }
-  if(file.exists("pkgdown"&&pkgdown)){
+  if(file.exists("pkgdown")&&pkgdown){
     ref_file <- "pkgdown"
     do_it <- T
     if(check_for_update){
