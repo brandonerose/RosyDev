@@ -4,7 +4,7 @@
 \alias{dev_document}
 \title{dev_document}
 \usage{
-dev_document(force = F)
+dev_document(pkgdown = F, force = F)
 }
 \value{
 message

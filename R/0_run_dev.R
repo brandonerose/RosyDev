@@ -104,7 +104,7 @@ dev_update <- function(
 #' @description document
 #' @return message
 #' @export
-dev_document <- function(force = F){
+dev_document <- function(pkgdown = F,force = F){
   check_for_update <- file.exists("dev/update_log.csv")
   update_log <- data.frame(file = character(0),mtime= character(0))
   if(check_for_update){
@@ -155,7 +155,7 @@ dev_document <- function(force = F){
       }
     }
   }
-  if(file.exists("pkgdown")){
+  if(file.exists("pkgdown"&&pkgdown)){
     ref_file <- "pkgdown"
     do_it <- T
     if(check_for_update){

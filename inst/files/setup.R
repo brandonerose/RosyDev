@@ -19,6 +19,12 @@ usethis::use_readme_rmd(open = FALSE)
 usethis::use_code_of_conduct(contact = "Brandon Rose")
 usethis::use_lifecycle_badge("Experimental")
 usethis::use_news_md(open = FALSE)
+usethis::use_testthat()
+usethis::use_github_action("check-standard")
+usethis::use_github_action("test-coverage")
+usethis::use_github_action("pr-commands")
+usethis::use_pkgdown()
+usethis::use_pkgdown_github_pages()
 golem::remove_favicon() # Uncomment to remove the default favicon
 logo_path <- "dev/logo.png"
 file.copy(

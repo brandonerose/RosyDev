@@ -27,10 +27,44 @@ RosyDev::dev_document()
 # update and push ==============================================================
 RosyDev::dev_update()
 RosyDev::fast_commit(
-  message = "add tests file",
+  message = "dev",
   push = T
 )
 #other =========================================================================
+devtools::test()
+codetools::checkUsagePackage("RosyREDCap", suppressLocal = TRUE)
+devtools::check_man()
+covrpage::covrpage()
+checkhelper::check_as_cran()
+# checkhelper::get_notes()
+# checkhelper::print_globals()
+covr::package_coverage(path = getwd())
+covr::report()
+x<-checkhelper::find_missing_tags()
+data_check <- x$data
+function_check <- x$functions
+function_check <- function_check[which(function_check$test_has_export_and_return =="not_ok"|function_check$test_has_export_or_has_nord =="not_ok"),]
+missing_export_and_return <- function_check$topic[which(function_check$test_has_export_and_return =="not_ok")]%>% unique()
+missing_export_or_nord <- function_check$topic[which(function_check$test_has_export_or_has_nord =="not_ok")] %>% unique()
+if(length(missing_export_and_return)>0)RosyUtils::vec_cat(missing_export_and_return)
+if(length(missing_export_or_nord)>0)RosyUtils::vec_cat(missing_export_or_nord)
+
+extract_function_calls <- function(file) {
+  parsed <- parse(file)
+  calls <- sapply(parsed, function(x) {
+    if (is.call(x)) {
+      all.names(x)
+    } else {
+      NULL
+    }
+  })
+  unique(unlist(calls))
+}
+x<-extract_function_definitions("dev/combined.R")
+x[dw(x)]
+get_external_functions("RosyREDCap") %>% vec_cat("- ")
+
+#other2 =========================================================================
 
 devtools::build_readme()
 usethis::use_version(which = "dev")
