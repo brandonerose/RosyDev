@@ -7,7 +7,7 @@ RosyUtils::clear_env()
 Rosyverse::load_all()
 # pull first =========================
 usethis:::git_pull()
-RosyDev::delete_combined() # for when you pull a new update from github
+RosyDev::dev_update(overwrite = T)# for when you pull a new update from github
 # Setup ========================================================================
 pkg_dir <- getwd()
 pkg_name <- basename(pkg_dir)
