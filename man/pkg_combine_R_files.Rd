@@ -7,7 +7,7 @@
 pkg_combine_R_files(
   pkgs,
   destination_dir = getwd(),
-  filename_type = "name__version",
+  file_name_type = "name__version",
   header_symbol = "=",
   max_new_lines = 0,
   new_lines = character(0),
@@ -18,7 +18,7 @@ pkg_combine_R_files(
 \arguments{
 \item{pkgs}{package name(s) as character string}
 
-\item{filename_type}{character string of type filename: "name__version" or "name"}
+\item{file_name_type}{character string of type file_name: "name__version" or "name"}
 }
 \value{
 message

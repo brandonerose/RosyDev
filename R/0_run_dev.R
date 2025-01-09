@@ -10,44 +10,12 @@ dev_update <- function(
     is_production = F,
     overwrite = F
 ){
-  usethis:::check_is_package()
-  pkg_dir <- getwd()
-  if( ! silent) message("pkg_dir: ",pkg_dir)
-  pkg_name <- basename(pkg_dir)
-  dev_dir <- file.path(pkg_dir,"dev")
-  if( ! silent) message("pkg_name: ",pkg_name)
-  if( ! file.exists(file.path(dev_dir,"combined.R")) || overwrite){
-    combine_R_files()
-  }
-  expected_test_folder <- file.path(pkg_dir,"tests","testthat")
-  if( ! file.exists(file.path(dev_dir,"tests.R")) || overwrite){
-    if(file.exists(expected_test_folder)){
-      combine_R_files(
-        source_dir = expected_test_folder,
-        filename = "tests.R"
-      )
-    }
-  }
-  split_R_files()
-  if(file.exists(expected_test_folder)&&file.exists(file.path(dev_dir,"tests.R"))){
-    split_R_files(
-      source_dir = dev_dir,
-      destination_dir = expected_test_folder,
-      filename = "tests.R"
-    )
-  }
+  dev_combine_split_R_files(choice = "both")
   devtools::document()
   attachment::att_amend_desc()
   golem::detach_all_attached()
-  # devtools::unload()
   devtools::load_all()
-  combine_R_files()
-  if(file.exists(expected_test_folder)){
-    combine_R_files(
-      source_dir = expected_test_folder,
-      filename = "tests.R"
-    )
-  }
+  dev_combine_split_R_files(choice = "combine")
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
     copy_golem_to_wd()
@@ -98,6 +66,62 @@ dev_update <- function(
   write.csv(update_log,file = "dev/update_log.csv",row.names = F)
   if(due_for_update){
     bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
+  }
+}
+dev_combine_split_R_files <- function(choice = "combine"){
+  if(length(choice)>1)stop("Choice must be length 1")
+  choices <- c("split","combine","both")
+  if(!choice %in%choices)stop("Choice must be one of... ",as_comma_string(choices))
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  if( ! silent) message("pkg_dir: ",pkg_dir)
+  pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
+  if( ! silent) message("pkg_name: ",pkg_name)
+  param_list <- list(
+    #R
+    list(
+      source_dir = file.path(pkg_dir,"R"),
+      file_name = "combined",
+      file_ext = ".R"
+    ),
+    #tests
+    list(
+      source_dir = file.path(pkg_dir,"tests","testthat"),
+      file_name = "tests",
+      file_ext = ".R"
+    ),
+    #vignettes
+    list(
+      source_dir = file.path(pkg_dir,"vignettes"),
+      file_name = "vignettes",
+      file_ext = ".Rmd"
+    )
+  )
+  for(i in 1:length(param_list)){
+    source_dir <- param_list[[i]]$source_dir
+    file_name <- param_list[[i]]$file_name
+    file_ext <- param_list[[i]]$file_ext
+    expected_file <- file.path(source_dir,paste0(file_name,file_ext))
+    if(choice %in% c("combine","both")){
+      if(overwrite || !file.exists(expected_file)){
+        combine_R_files(
+          source_dir = source_dir,
+          file_name = file_name,
+          file_ext = file_ext
+        )
+      }
+    }
+    if(choice %in% c("split","both")){
+      if(file.exists(source_dir)){
+        split_R_files(
+          source_dir = dev_dir,
+          destination_dir = source_dir,
+          file_name = file_name,
+          file_ext = file_ext
+        )
+      }
+    }
   }
 }
 #' @title dev_document

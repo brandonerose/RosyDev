@@ -7,7 +7,8 @@
 split_R_files(
   source_dir = file.path(getwd(), "dev"),
   destination_dir = file.path(getwd(), "R"),
-  filename = "combined.R",
+  file_name = "combined",
+  file_ext = ".R",
   header_symbol = "=",
   new_lines = character(0)
 )
@@ -17,7 +18,7 @@ split_R_files(
 
 \item{destination_dir}{a file path for your destination (such as dev folder)}
 
-\item{filename}{a file name (ends in .R)}
+\item{file_name}{a file name (ends in .R)}
 
 \item{header_symbol}{single character for your header separator in combined file}
 

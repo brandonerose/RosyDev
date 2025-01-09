@@ -7,7 +7,7 @@
 pkg_combine_R_files_launch(
   pkg,
   destination_dir = tempdir(),
-  filename_type = "name__version",
+  file_name_type = "name__version",
   header_symbol = "=",
   max_new_lines = 0,
   new_lines = character(0),
@@ -15,7 +15,7 @@ pkg_combine_R_files_launch(
 )
 }
 \arguments{
-\item{filename_type}{character string of type filename: "name__version" or "name"}
+\item{file_name_type}{character string of type file_name: "name__version" or "name"}
 
 \item{pkgs}{package name(s) as character string}
 }

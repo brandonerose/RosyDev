@@ -1,39 +1,25 @@
 #' @title combine_R_files
 #' @param source_dir a file path for your source (such as R folder)
 #' @param destination_dir a file path for your destination (such as dev folder)
-#' @param filename a file name (ends in .R)
+#' @param file_name a file name (ends in .R)
 #' @param header_symbol single character for your header separator in combined file
 #' @param max_new_lines integer for max number of new lines
 #' @param new_lines character vector for new lines
 #' @param overwrite logical for overwriting original file
 #' @return message
 #' @export
-combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),filename="combined.R",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = T) {
-  # if(!file.exists(source_dir)){
-  #   installed_packages <- installed.packages() %>% as.data.frame()
-  #   pkgs <- installed_packages$Package %>% as.character()
-  #   if(!source_dir%in%pkgs){
-  #     stop("Your `source_dir` does not exist as a folder AND it is not the name of one of your installed packages!")
-  #   }
-  #   source_dir <- system.file("R",package = source_dir)
-  # }
-  # if(!file.exists(destination_dir)){
-  #   the_wd <- getwd()
-  #   message("`destination_dir` does not exist. Will default to your working directory... \nInstead of: '",destination_dir,"'\nWill Use: '",the_wd,"'")
-  #   destination_dir <- the_wd
-  # }
-  file_list <- list.files(source_dir, pattern = "\\.R$", full.names = TRUE)
-  combined_text <- character(0)
-  for (file in file_list) {# file <- file_list %>% sample(1)
-    file_name <- tools::file_path_sans_ext(basename(file))
-    header <- paste0("# ", file_name, " ")
-    header <- paste0(header,  paste0(rep(header_symbol,80-nchar(header)), collapse=""))
-    combined_text <- c(combined_text, header,new_lines, readLines(file))
+combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),file_name="combined",file_ext=".R",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = T) {
+  if(!file_ext %in% c(".R",".Rmd"))stop("file_ext must be R or Rmd")
+  expected_folder <- file.path(source_dir)
+  if(!file.exists(expected_folder)){
+    bullet_in_console("No folder",file = expected_folder)
+    return(invisible())
   }
+  dir.create(destination_dir,showWarnings = F,recursive = T)
   message(length(combined_text)," lines")
   combined_text <-paste(combined_text, collapse = "\n")
   combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
-  destination_file <- file.path(destination_dir, filename)
+  destination_file <- file.path(destination_dir, paste0(file_name,file_ext))
   if(!file.exists(destination_file)||overwrite){
     writeLines(combined_text, destination_file)
     bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
@@ -43,8 +29,15 @@ combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir
 #' @inheritParams combine_R_files
 #' @return message
 #' @export
-split_R_files <- function(source_dir= file.path(getwd(),"dev"), destination_dir=file.path(getwd(),"R"),filename = "combined.R",header_symbol = "=",new_lines=character(0)){
-  file_content <- readLines(file.path(source_dir,filename))
+split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir=file.path(getwd(),"R"),file_name = "combined",file_ext = ".R",header_symbol = "=",new_lines=character(0)){
+  if(!file_ext %in% c(".R",".Rmd"))stop("file_ext must be R or Rmd")
+  expected_file <- file.path(source_dir,paste0(file_name,file_ext))
+  if(!file.exists(expected_file)){
+    bullet_in_console("No file",file = expected_file)
+    return(invisible())
+  }
+  dir.create(destination_dir,showWarnings = F,recursive = T)
+  file_content <- readLines(expected_file)
   split_indices <- grep(paste0("^# .* ",paste0(rep(header_symbol,4),collapse=""), collapse=""), file_content)
   split_indices <- as.list(split_indices)
   scripts <- NULL
@@ -115,13 +108,13 @@ download_and_extract_source_R_files <- function(pkg) {
 }
 #' @title pkg_combine_R_files
 #' @param pkgs package name(s) as character string
-#' @param filename_type character string of type filename: "name__version" or "name"
+#' @param file_name_type character string of type file_name: "name__version" or "name"
 #' @return message
 #' @export
-pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F,launch_file = 0) {
+pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),file_name_type="name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F,launch_file = 0) {
   installed_packages <- installed.packages() %>% as.data.frame()
   installed_packages$comparison_name <- installed_packages$Package
-  if(filename_type=="name__version"){
+  if(file_name_type=="name__version"){
     installed_packages$comparison_name <- paste0(installed_packages$Package,"__",gsub("\\.|\\-","_",installed_packages$Version))
   }
   installed_packages$file_name <- installed_packages$comparison_name %>% paste0(".R")
@@ -146,7 +139,7 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
   if(length(pkgs_there)>0) message("Packages already there: ",pkgs_there %>% paste0(collapse = ", "))
   if(length(pkgs_missing)>0) message("Packages missing: ",pkgs_missing %>% paste0(collapse = ", "))
   if( ! overwrite){
-    if(filename_type=="name__version"){
+    if(file_name_type=="name__version"){
       downloaded_file_list <-
         downloaded_file_list %>%
         strsplit("__") %>%
@@ -187,7 +180,7 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
           combine_R_files(
             source_dir = source_dir,
             destination_dir = destination_dir,
-            filename = installed_packages$file_name[ROW],
+            file_name = installed_packages$file_name[ROW],
             header_symbol = header_symbol,
             max_new_lines = max_new_lines,
             new_lines = new_lines,
@@ -216,14 +209,14 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),filename_type="nam
 }
 #' @title pkg_combine_R_files_launch
 #' @param pkgs package name(s) as character string
-#' @param filename_type character string of type filename: "name__version" or "name"
+#' @param file_name_type character string of type file_name: "name__version" or "name"
 #' @return message
 #' @export
-pkg_combine_R_files_launch <- function(pkg,destination_dir = tempdir(),filename_type = "name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F) {
+pkg_combine_R_files_launch <- function(pkg,destination_dir = tempdir(),file_name_type = "name__version",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = F) {
   pkg_combine_R_files(
     pkgs = pkg,
     destination_dir = destination_dir,
-    filename_type = "name__version",
+    file_name_type = "name__version",
     header_symbol = header_symbol,
     max_new_lines = max_new_lines,
     new_lines = new_lines,
