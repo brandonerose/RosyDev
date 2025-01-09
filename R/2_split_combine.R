@@ -75,7 +75,7 @@ combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir
   destination_file <- file.path(destination_dir, paste0(file_name,file_ext))
   if(!file.exists(destination_file)||overwrite){
     dir.create(destination_dir,showWarnings = FALSE,recursive = TRUE)
-    file_list <- list.files(source_dir, pattern = paste0("\\.",file_ext,"$"), full.names = TRUE)
+    file_list <- list.files(source_dir, pattern = paste0("\\",file_ext,"$"), full.names = TRUE)
     combined_text <- character(0)
     for (file in file_list) {# file <- file_list %>% sample(1)
       file_name <- tools::file_path_sans_ext(basename(file))
