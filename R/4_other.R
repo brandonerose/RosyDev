@@ -14,7 +14,7 @@ check_namespace_conflicts<-function(pkgs,ignores = c(
   # pkgs <- pkgs %>% sort()
   x <- NULL
   for(pkg in pkgs){
-    library(pkg, character.only = T)
+    library(pkg, character.only = TRUE)
     exported_functions <- ls(paste0("package:",pkg))
     internal_functions <-
       x <- x %>% rbind(
@@ -56,9 +56,9 @@ check_namespace_conflicts<-function(pkgs,ignores = c(
     if(length(z)<2) return(NA)
     z %>% paste0(collapse = " | ") %>% return()
   })
-  y <- y[order(y$int_int_conflict, decreasing = T),]
-  y <- y[order(y$int_exp_conflict, decreasing = T),]
-  y <- y[order(y$exp_exp_conflict, decreasing = T),]
+  y <- y[order(y$int_int_conflict, decreasing = TRUE),]
+  y <- y[order(y$int_exp_conflict, decreasing = TRUE),]
+  y <- y[order(y$exp_exp_conflict, decreasing = TRUE),]
   z<- y[which(!is.na(y$exp_exp_conflict)),]
   if(nrow(z)>0){
     z$function_name <- stringr::str_pad(
@@ -89,7 +89,7 @@ get_all_functions <- function(pkg){
 }
 get_logo_paths <-function(){
   logo_folder <- system.file("logos",package = "RosyDev")
-  logo_files <- logo_folder %>% list.files(full.names = T)
+  logo_files <- logo_folder %>% list.files(full.names = TRUE)
   logo_files <- logo_files[which(endsWith(logo_files,".png"))]
   allowed_names <- logo_files %>% basename() %>% tools::file_path_sans_ext() %>% gsub("hex-","",.)
   named_list <- as.list(logo_files)
@@ -107,7 +107,7 @@ get_imported_packages <- function(pkg_name) {
   }
   return(imports_vector)
 }
-copy_logos_to_package <- function(copy_to = file.path("inst","app","www"),only_if_imported = T){
+copy_logos_to_package <- function(copy_to = file.path("inst","app","www"),only_if_imported = TRUE){
   usethis:::check_is_package()
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
@@ -115,12 +115,12 @@ copy_logos_to_package <- function(copy_to = file.path("inst","app","www"),only_i
   if(only_if_imported){
     named_list <- named_list[which(!startsWith(names(named_list),"Rosy")|(startsWith(names(named_list),"Rosy")&names(named_list)%in%get_imported_packages(pkg_name)))]
   }
-  dir.create(copy_to,recursive = T,showWarnings = F)
+  dir.create(copy_to,recursive = TRUE,showWarnings = FALSE)
   for(i in 1:length(named_list)){
     was_copied <- file.copy(
       from = named_list[[i]],
       to = file.path(copy_to,paste0(names(named_list[i]),".png")),
-      overwrite = F
+      overwrite = FALSE
     )
   }
   logo_path <- file.path(copy_to,paste0(pkg_name,".png"))
@@ -128,7 +128,7 @@ copy_logos_to_package <- function(copy_to = file.path("inst","app","www"),only_i
     file.copy(
       from = logo_path,
       to = file.path(copy_to,"logo.png"),
-      overwrite = F
+      overwrite = FALSE
     )
   }
 }
@@ -167,7 +167,7 @@ dev_show_functions <- function() {
 #' @export
 dev_show_duplicated_functions <- function() {
   all_functions <- dev_show_functions()
-  all_functions <- all_functions[which(duplicated(all_functions))] %>% unique() %>% sort(decreasing = T)
+  all_functions <- all_functions[which(duplicated(all_functions))] %>% unique() %>% sort(decreasing = TRUE)
   if(length(all_functions)==0)bullet_in_console("No duplicated functions", bullet_type = "v")
   return(all_functions)
 }
@@ -184,5 +184,5 @@ dev_function_freq <- function(){
     return(tmp$text)
   }
   all_functions <- unlist(lapply(files, get_function_freq))
-  all_functions %>% table() %>% sort(decreasing = T) %>% data.frame() %>% return()
+  all_functions %>% table() %>% sort(decreasing = TRUE) %>% data.frame() %>% return()
 }

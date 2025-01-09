@@ -4,7 +4,7 @@
 \alias{add_to_sysdata}
 \title{add_to_sysdata}
 \usage{
-add_to_sysdata(..., silent = F, overwrite = F)
+add_to_sysdata(..., silent = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{silent}{logical for messages}

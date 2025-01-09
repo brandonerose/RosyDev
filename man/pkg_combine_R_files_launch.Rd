@@ -11,7 +11,7 @@ pkg_combine_R_files_launch(
   header_symbol = "=",
   max_new_lines = 0,
   new_lines = character(0),
-  overwrite = F
+  overwrite = FALSE
 )
 }
 \arguments{

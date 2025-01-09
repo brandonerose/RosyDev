@@ -11,7 +11,7 @@ split_R_files(
   file_ext = ".R",
   header_symbol = "=",
   new_lines = character(0),
-  silent = F
+  silent = FALSE
 )
 }
 \arguments{

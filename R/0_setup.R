@@ -7,21 +7,21 @@
 #' @return path
 #' @export
 setup_RosyDev <- function(
-    silent = F,
-    launch_files = F,
-    overwrite = F,
-    use_golem = F,
-    only_if_imported = T
+    silent = FALSE,
+    launch_files = FALSE,
+    overwrite = FALSE,
+    use_golem = FALSE,
+    only_if_imported = TRUE
 ){
   usethis:::check_is_package()
-  # usethis::use_pipe(export = F)
+  # usethis::use_pipe(export = FALSE)
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
   dev_dir <- file.path(pkg_dir,"dev")
   test_dir <- file.path(dev_dir,"test_dir")
   if( ! silent) message("pkg_dir: ",pkg_dir)
-  dir.create(dev_dir,showWarnings = F)
-  dir.create(test_dir,showWarnings = F)
+  dir.create(dev_dir,showWarnings = FALSE)
+  dir.create(test_dir,showWarnings = FALSE)
   copy_these <- system.file(
     file.path(
       "files",
@@ -78,7 +78,7 @@ setup_RosyDev <- function(
     copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
   }
   # if(use_pkgdown){ # would have to have github setup already... so hold for now
-  #   do_it <- T
+  #   do_it <- TRUE
   #   if(file.exists("pkgdown")){
   #     do_it <- utils::menu(choices = c("Yes", "No"),title = "You are about to run `usethis::use_pkgdown_github_pages()` but it already pkgdown folder already exists. Are you sure?")==1
   #     if(do_it){

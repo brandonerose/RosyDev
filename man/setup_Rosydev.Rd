@@ -5,11 +5,11 @@
 \title{Package System}
 \usage{
 setup_RosyDev(
-  silent = F,
-  launch_files = F,
-  overwrite = F,
-  use_golem = F,
-  only_if_imported = T
+  silent = FALSE,
+  launch_files = FALSE,
+  overwrite = FALSE,
+  use_golem = FALSE,
+  only_if_imported = TRUE
 )
 }
 \arguments{

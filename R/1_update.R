@@ -5,23 +5,23 @@
 #' @return message
 #' @export
 dev_update <- function(
-    silent = F,
-    use_internal_pkg = T,
-    is_production = F,
-    overwrite = F
+    silent = FALSE,
+    use_internal_pkg = TRUE,
+    is_production = FALSE,
+    overwrite = FALSE
 ){
   dev_combine_split_R_files(choice = "both",silent = silent,overwrite = overwrite)
   devtools::document()
   attachment::att_amend_desc()
   golem::detach_all_attached()
   devtools::load_all()
-  dev_combine_split_R_files(choice = "combine",silent = silent, overwrite = T)
+  dev_combine_split_R_files(choice = "combine",silent = silent, overwrite = TRUE)
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
     copy_golem_to_wd()
-    golem::amend_golem_config(key = "golem_name", value = pkg_name,talkative = F)
-    golem::amend_golem_config(key = "golem_version", value = pkg_version,talkative = F)
-    golem::amend_golem_config(key = "app_prod", is_production,talkative = F)
+    golem::amend_golem_config(key = "golem_name", value = pkg_name,talkative = FALSE)
+    golem::amend_golem_config(key = "golem_version", value = pkg_version,talkative = FALSE)
+    golem::amend_golem_config(key = "app_prod", is_production,talkative = FALSE)
     options("golem.app.prod" = is_production)
   }
   check_for_update <- file.exists("dev/update_log.csv")
@@ -29,17 +29,17 @@ dev_update <- function(
   if(check_for_update){
     update_log <-read.csv("dev/update_log.csv")
   }
-  due_for_update <- F
+  due_for_update <- FALSE
   if(file.exists("README.Rmd")){
     ref_file <- "README.Rmd"
-    do_it <- T
+    do_it <- TRUE
     if(check_for_update){
       if(any(update_log$file==ref_file)){
         do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
       }
     }
     if(do_it){
-      due_for_update <- T
+      due_for_update <- TRUE
     }
   }
   if(file.exists("vignettes")){
@@ -47,14 +47,14 @@ dev_update <- function(
     test_for_vig <- list.files("vignettes") %>% tools::file_ext()
     test_for_vig <- "Rmd"%in% test_for_vig
     if(test_for_vig){
-      do_it <- T
+      do_it <- TRUE
       if(check_for_update){
         if(any(update_log$file==ref_file)){
           do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
         }
       }
       if(do_it){
-        due_for_update <- T
+        due_for_update <- TRUE
       }
     }
   }
@@ -63,7 +63,7 @@ dev_update <- function(
     add_to_sysdata(pkg_name,pkg_version,pkg_date)
   }
   show_clickable_devs()
-  write.csv(update_log,file = "dev/update_log.csv",row.names = F)
+  write.csv(update_log,file = "dev/update_log.csv",row.names = FALSE)
   if(due_for_update){
     bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
   }
@@ -72,16 +72,16 @@ dev_update <- function(
 #' @description document
 #' @return message
 #' @export
-dev_document <- function(pkgdown = F,force = F){
+dev_document <- function(pkgdown = FALSE,force = FALSE){
   check_for_update <- file.exists("dev/update_log.csv")
   update_log <- data.frame(file = character(0),mtime= character(0))
   if(check_for_update){
     update_log <-read.csv("dev/update_log.csv")
   }
-  any_updates <- F
+  any_updates <- FALSE
   if(file.exists("README.Rmd")){
     ref_file <- "README.Rmd"
-    do_it <- T
+    do_it <- TRUE
     if(check_for_update){
       if(any(update_log$file==ref_file)){
         do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
@@ -96,7 +96,7 @@ dev_document <- function(pkgdown = F,force = F){
             mtime =file.info(ref_file)$mtime %>% as.character()
           )
         )
-      any_updates <- T
+      any_updates <- TRUE
     }
   }
   if(file.exists("vignettes")){
@@ -104,7 +104,7 @@ dev_document <- function(pkgdown = F,force = F){
     test_for_vig <- list.files("vignettes") %>% tools::file_ext()
     test_for_vig <- "Rmd"%in% test_for_vig
     if(test_for_vig){
-      do_it <- T
+      do_it <- TRUE
       if(check_for_update){
         if(any(update_log$file==ref_file)){
           do_it <- as.character(file.info(ref_file)$mtime)!=update_log$mtime[which(update_log$file==ref_file)]
@@ -119,13 +119,13 @@ dev_document <- function(pkgdown = F,force = F){
               mtime =file.info(ref_file)$mtime %>% as.character()
             )
           )
-        any_updates <- T
+        any_updates <- TRUE
       }
     }
   }
   if(file.exists("pkgdown")&&pkgdown){
     ref_file <- "pkgdown"
-    do_it <- T
+    do_it <- TRUE
     if(check_for_update){
       do_it <- any_updates
     }
@@ -134,7 +134,7 @@ dev_document <- function(pkgdown = F,force = F){
     }
   }
   if(any_updates||force){
-    write.csv(update_log,"dev/update_log.csv",row.names = F)
+    write.csv(update_log,"dev/update_log.csv",row.names = FALSE)
   }
 }
 #' @title add_to_sysdata
@@ -142,7 +142,7 @@ dev_document <- function(pkgdown = F,force = F){
 #' @param silent logical for messages
 #' @return message
 #' @export
-add_to_sysdata <- function(..., silent = F,overwrite = F){
+add_to_sysdata <- function(..., silent = FALSE,overwrite = FALSE){
   objs <- usethis:::get_objs_from_dots(usethis:::dots(...))
   usethis:::check_is_package()
   temp_env <- new.env()
@@ -169,7 +169,7 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = F){
+fast_commit <- function(message = "dev", push = FALSE){
   usethis::use_git(message = message)
   if(push){
     usethis:::git_push()
@@ -201,9 +201,9 @@ bump_version <- function(which = "dev"){
 #' @description copy minimum golem files to working directory
 #' @inheritParams setup_RosyDev
 #' @return files being copied if needed/wanted
-copy_golem_to_wd <- function(overwrite = F, silent = T){
+copy_golem_to_wd <- function(overwrite = FALSE, silent = TRUE){
   if(!usethis:::is_package())stop("Your wd is not a package!")
-  dir.create("inst",showWarnings = F)
+  dir.create("inst",showWarnings = FALSE)
   golem_files <- c(
     system.file("shinyexample","inst","golem-config.yml", package = "golem"),
     system.file("shinyexample","R","app_config.R", package = "golem")
@@ -217,7 +217,7 @@ copy_golem_to_wd <- function(overwrite = F, silent = T){
       file.copy(
         from = golem_file,
         to = dn,
-        overwrite = T
+        overwrite = TRUE
       )
       try({
         RosyUtils::replace_word_file(file = path_to_new, pattern = "shinyexample", replace = basename(getwd()))

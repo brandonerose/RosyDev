@@ -4,7 +4,7 @@
 \alias{pkg_dev_nav_combined}
 \title{pkg_dev_nav_combined}
 \usage{
-pkg_dev_nav_combined(pane = T)
+pkg_dev_nav_combined(pane = TRUE)
 }
 \value{
 file opens in RStudio

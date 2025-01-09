@@ -3,7 +3,7 @@
 #' @param name character string for the file name to be opened
 #' @return file opens in RStudio
 #' @export
-pkg_dev_nav <- function(name = NULL,pane = T){
+pkg_dev_nav <- function(name = NULL,pane = TRUE){
   path <- dev_dir <- file.path(getwd(),"dev")
   test_dir <- file.path(dev_dir,"test_dir")
   if(is.null(name))print(list.files(dev_dir))
@@ -22,7 +22,7 @@ pkg_dev_nav <- function(name = NULL,pane = T){
 #' @description Navigate to combined.R dev file in RStudio
 #' @return file opens in RStudio
 #' @export
-pkg_dev_nav_combined <- function(pane = T){
+pkg_dev_nav_combined <- function(pane = TRUE){
   pkg_dev_nav("combined.R")
 }
 #' @title pkg_dev_nav_setup

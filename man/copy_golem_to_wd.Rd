@@ -4,7 +4,7 @@
 \alias{copy_golem_to_wd}
 \title{copy_golem_to_wd}
 \usage{
-copy_golem_to_wd(overwrite = F, silent = T)
+copy_golem_to_wd(overwrite = FALSE, silent = TRUE)
 }
 \arguments{
 \item{overwrite}{logical for overwrite}
