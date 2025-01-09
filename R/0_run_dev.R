@@ -1,3 +1,93 @@
+#' @title Package System
+#' @description Find the file system of a package
+#' @param silent logical for messages
+#' @param launch_files logical for launching files
+#' @param overwrite logical for overwrite
+#' @param use_golem logical for using golem
+#' @return path
+#' @export
+setup_RosyDev <- function(
+    silent = F,
+    launch_files = F,
+    overwrite = F,
+    use_golem = F,
+    only_if_imported = T
+){
+  usethis:::check_is_package()
+  # usethis::use_pipe(export = F)
+  pkg_dir <- getwd()
+  pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
+  test_dir <- file.path(dev_dir,"test_dir")
+  if( ! silent) message("pkg_dir: ",pkg_dir)
+  dir.create(dev_dir,showWarnings = F)
+  dir.create(test_dir,showWarnings = F)
+  copy_these <- system.file(
+    file.path(
+      "files",
+      c(
+        "gitignore",
+        "Rbuildignore",
+        "setup.R",
+        "dev.R",
+        "test_dev.R",
+        "test_prod.R",
+        "README.Rmd"
+      )
+    ),package = "RosyDev")
+  paste_here <- c(
+    file.path(pkg_dir,".gitignore"),
+    file.path(pkg_dir,".Rbuildignore"),
+    file.path(dev_dir,"setup.R"),
+    file.path(dev_dir,"dev.R"),
+    file.path(dev_dir,"test_dev.R"),
+    file.path(dev_dir,"test_prod.R"),
+    file.path(pkg_dir,"README.Rmd")
+  )
+  for(i in 1:length(copy_these)){
+    the_file_exisits <- file.exists(paste_here[i])
+    if(the_file_exisits){
+      message("Already a file: ",paste_here[i])
+      if(overwrite)message("overwritten!")
+    }
+    was_copied <- file.copy(
+      from = copy_these[i],
+      to = paste_here[i],
+      overwrite = overwrite
+    )
+    if(was_copied){
+      if(basename(copy_these[i])%in%c("README.Rmd","test_prod.R")){
+        RosyUtils::replace_word_file(
+          file = paste_here[i],
+          pattern = "your_package_here",
+          replace = basename(pkg_dir)
+        )
+      }
+    }
+  }
+  dev_combine_split_R_files()
+  if(launch_files)launch_devs()
+  # copy_to <- file.path("man","figures")
+  copy_to <- file.path("inst","app","www")  #can fix this later
+  if(use_golem){
+    copy_golem_to_wd(
+      overwrite = overwrite,
+      silent = silent
+    )
+    copy_to <- file.path("inst","app","www")
+    copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
+  }
+  # if(use_pkgdown){ # would have to have github setup already... so hold for now
+  #   do_it <- T
+  #   if(file.exists("pkgdown")){
+  #     do_it <- utils::menu(choices = c("Yes", "No"),title = "You are about to run `usethis::use_pkgdown_github_pages()` but it already pkgdown folder already exists. Are you sure?")==1
+  #     if(do_it){
+  #       usethis::use_pkgdown_github_pages()
+  #     }
+  #   }
+  # }
+  show_clickable_devs()
+}
 #' @import RosyUtils
 #' @title Update Dev
 #' @description Update package from combined.R by documenting and combining files again
@@ -10,12 +100,12 @@ dev_update <- function(
     is_production = F,
     overwrite = F
 ){
-  dev_combine_split_R_files(choice = "both")
+  dev_combine_split_R_files(choice = "both",silent = silent,overwrite = overwrite)
   devtools::document()
   attachment::att_amend_desc()
   golem::detach_all_attached()
   devtools::load_all()
-  dev_combine_split_R_files(choice = "combine")
+  dev_combine_split_R_files(choice = "combine",silent = silent, overwrite = T)
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if(file.exists("inst/golem-config.yml")){
     copy_golem_to_wd()
@@ -68,7 +158,7 @@ dev_update <- function(
     bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
   }
 }
-dev_combine_split_R_files <- function(choice = "combine"){
+dev_combine_split_R_files <- function(choice = "combine",silent = F, overwrite = F){
   if(length(choice)>1)stop("Choice must be length 1")
   choices <- c("split","combine","both")
   if(!choice %in%choices)stop("Choice must be one of... ",as_comma_string(choices))
@@ -104,13 +194,13 @@ dev_combine_split_R_files <- function(choice = "combine"){
     file_ext <- param_list[[i]]$file_ext
     expected_file <- file.path(source_dir,paste0(file_name,file_ext))
     if(choice %in% c("combine","both")){
-      if(overwrite || !file.exists(expected_file)){
-        combine_R_files(
-          source_dir = source_dir,
-          file_name = file_name,
-          file_ext = file_ext
-        )
-      }
+      combine_R_files(
+        source_dir = source_dir,
+        file_name = file_name,
+        file_ext = file_ext,
+        silent = silent,
+        overwrite = overwrite
+      )
     }
     if(choice %in% c("split","both")){
       if(file.exists(source_dir)){
@@ -118,7 +208,8 @@ dev_combine_split_R_files <- function(choice = "combine"){
           source_dir = dev_dir,
           destination_dir = source_dir,
           file_name = file_name,
-          file_ext = file_ext
+          file_ext = file_ext,
+          silent = silent
         )
       }
     }
@@ -218,96 +309,6 @@ add_to_sysdata <- function(..., silent = F,overwrite = F){
     MoreArgs = list(envir = temp_env, compress = "bzip2", version = 2)
   )
   if(!silent) message("RosyDev saved: ",names(temp_env) %>% paste0(collapse = ", "))
-}
-#' @title Package System
-#' @description Find the file system of a package
-#' @param silent logical for messages
-#' @param launch_files logical for launching files
-#' @param overwrite logical for overwrite
-#' @param use_golem logical for using golem
-#' @return path
-#' @export
-setup_RosyDev <- function(
-    silent = F,
-    launch_files = F,
-    overwrite = F,
-    use_golem = F,
-    only_if_imported = T
-){
-  usethis:::check_is_package()
-  usethis::use_pipe()
-  pkg_dir <- getwd()
-  pkg_name <- basename(pkg_dir)
-  dev_dir <- file.path(pkg_dir,"dev")
-  test_dir <- file.path(dev_dir,"test_dir")
-  if( ! silent) message("pkg_dir: ",pkg_dir)
-  dir.create(dev_dir,showWarnings = F)
-  dir.create(test_dir,showWarnings = F)
-  copy_these <- system.file(
-    file.path(
-      "files",
-      c(
-        "gitignore",
-        "Rbuildignore",
-        "setup.R",
-        "dev.R",
-        "test_dev.R",
-        "test_prod.R",
-        "README.Rmd"
-      )
-    ),package = "RosyDev")
-  paste_here <- c(
-    file.path(pkg_dir,".gitignore"),
-    file.path(pkg_dir,".Rbuildignore"),
-    file.path(dev_dir,"setup.R"),
-    file.path(dev_dir,"dev.R"),
-    file.path(dev_dir,"test_dev.R"),
-    file.path(dev_dir,"test_prod.R"),
-    file.path(pkg_dir,"README.Rmd")
-  )
-  for(i in 1:length(copy_these)){
-    the_file_exisits <- file.exists(paste_here[i])
-    if(the_file_exisits){
-      message("Already a file: ",paste_here[i])
-      if(overwrite)message("overwritten!")
-    }
-    was_copied <- file.copy(
-      from = copy_these[i],
-      to = paste_here[i],
-      overwrite = overwrite
-    )
-    if(was_copied){
-      if(basename(copy_these[i])%in%c("README.Rmd","test_prod.R")){
-        RosyUtils::replace_word_file(
-          file = paste_here[i],
-          pattern = "your_package_here",
-          replace = basename(pkg_dir)
-        )
-      }
-    }
-  }
-  if(overwrite||!file.exists(file.path(pkg_dir,"dev","combined.R")))combine_R_files()
-  if(launch_files)launch_devs()
-  # copy_to <- file.path("man","figures")
-  copy_to <- file.path("inst","app","www")  #can fix this later
-  if(use_golem){
-    copy_golem_to_wd(
-      overwrite = overwrite,
-      silent = silent
-    )
-    copy_to <- file.path("inst","app","www")
-    copy_logos_to_package(copy_to = copy_to,only_if_imported = only_if_imported)
-  }
-  # if(use_pkgdown){ # would have to have github setup already... so hold for now
-  #   do_it <- T
-  #   if(file.exists("pkgdown")){
-  #     do_it <- utils::menu(choices = c("Yes", "No"),title = "You are about to run `usethis::use_pkgdown_github_pages()` but it already pkgdown folder already exists. Are you sure?")==1
-  #     if(do_it){
-  #       usethis::use_pkgdown_github_pages()
-  #     }
-  #   }
-  # }
-  show_clickable_devs()
 }
 file_paths_dev <- function(){
   usethis:::check_is_package()

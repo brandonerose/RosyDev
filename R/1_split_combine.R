@@ -8,28 +8,36 @@
 #' @param overwrite logical for overwriting original file
 #' @return message
 #' @export
-combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),file_name="combined",file_ext=".R",header_symbol = "=",max_new_lines=0,new_lines=character(0),overwrite = T) {
+combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir=file.path(getwd(),"dev"),file_name="combined",file_ext=".R",header_symbol = "=",max_new_lines=0,new_lines=character(0),silent = F,overwrite = T) {
   if(!file_ext %in% c(".R",".Rmd"))stop("file_ext must be R or Rmd")
   expected_folder <- file.path(source_dir)
   if(!file.exists(expected_folder)){
-    bullet_in_console("No folder",file = expected_folder)
+    if(!silent)bullet_in_console("No folder",file = expected_folder)
     return(invisible())
   }
+  file_list <- list.files(source_dir, pattern = "\\.R$", full.names = TRUE)
+  combined_text <- character(0)
+  for (file in file_list) {# file <- file_list %>% sample(1)
+    file_name <- tools::file_path_sans_ext(basename(file))
+    header <- paste0("# ", file_name, " ")
+    header <- paste0(header,  paste0(rep(header_symbol,80-nchar(header)), collapse=""))
+    combined_text <- c(combined_text, header,new_lines, readLines(file))
+  }
   dir.create(destination_dir,showWarnings = F,recursive = T)
-  message(length(combined_text)," lines")
+  if(!silent)message(length(combined_text)," lines")
   combined_text <-paste(combined_text, collapse = "\n")
   combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
   destination_file <- file.path(destination_dir, paste0(file_name,file_ext))
   if(!file.exists(destination_file)||overwrite){
     writeLines(combined_text, destination_file)
-    bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
+    if(!silent)bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
   }
 }
 #' @title split_R_files
 #' @inheritParams combine_R_files
 #' @return message
 #' @export
-split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir=file.path(getwd(),"R"),file_name = "combined",file_ext = ".R",header_symbol = "=",new_lines=character(0)){
+split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir=file.path(getwd(),"R"),file_name = "combined",file_ext = ".R",header_symbol = "=",new_lines=character(0),silent = F){
   if(!file_ext %in% c(".R",".Rmd"))stop("file_ext must be R or Rmd")
   expected_file <- file.path(source_dir,paste0(file_name,file_ext))
   if(!file.exists(expected_file)){

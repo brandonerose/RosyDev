@@ -12,6 +12,7 @@ combine_R_files(
   header_symbol = "=",
   max_new_lines = 0,
   new_lines = character(0),
+  silent = F,
   overwrite = T
 )
 }

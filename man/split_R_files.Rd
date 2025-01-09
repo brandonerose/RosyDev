@@ -10,7 +10,8 @@ split_R_files(
   file_name = "combined",
   file_ext = ".R",
   header_symbol = "=",
-  new_lines = character(0)
+  new_lines = character(0),
+  silent = F
 )
 }
 \arguments{
