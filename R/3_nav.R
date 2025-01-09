@@ -53,3 +53,32 @@ pkg_dev_nav_test_dev <- function(){
 pkg_dev_nav_test_prod <- function(){
   pkg_dev_nav("test_prod.R")
 }
+file_paths_dev <- function(){
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
+  return(
+    c(
+      file.path(dev_dir,"setup.R"),
+      file.path(pkg_dir,"README.Rmd"),
+      file.path(pkg_dir,"NEWS.md"),
+      file.path(dev_dir,"dev.R"),
+      file.path(dev_dir,"test_dev.R"),
+      file.path(dev_dir,"test_prod.R"),
+      file.path(dev_dir,"combined.R")
+    )
+  )
+}
+show_clickable_devs <- function(){
+  bullet_in_console("Click below to open dev files...")
+  for(file_path in file_paths_dev()){
+    names(file_path) <- basename(file_path)
+    bullet_in_console(file = file_path,bullet_type = ifelse(file.exists(file_path), ">","x"))
+  }
+}
+launch_devs <- function(){
+  for(file_path in file_paths_dev()){
+    RosyUtils::view_file(file_path)
+  }
+}

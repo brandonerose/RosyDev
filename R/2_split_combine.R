@@ -1,3 +1,60 @@
+dev_combine_split_R_files <- function(choice = "combine",silent = F, overwrite = F){
+  if(length(choice)>1)stop("Choice must be length 1")
+  choices <- c("split","combine","both")
+  if(!choice %in%choices)stop("Choice must be one of... ",as_comma_string(choices))
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  if( ! silent) message("pkg_dir: ",pkg_dir)
+  pkg_name <- basename(pkg_dir)
+  dev_dir <- file.path(pkg_dir,"dev")
+  if( ! silent) message("pkg_name: ",pkg_name)
+  param_list <- list(
+    #R
+    list(
+      source_dir = file.path(pkg_dir,"R"),
+      file_name = "combined",
+      file_ext = ".R"
+    ),
+    #tests
+    list(
+      source_dir = file.path(pkg_dir,"tests","testthat"),
+      file_name = "tests",
+      file_ext = ".R"
+    ),
+    #vignettes
+    list(
+      source_dir = file.path(pkg_dir,"vignettes"),
+      file_name = "vignettes",
+      file_ext = ".Rmd"
+    )
+  )
+  for(i in 1:length(param_list)){
+    source_dir <- param_list[[i]]$source_dir
+    file_name <- param_list[[i]]$file_name
+    file_ext <- param_list[[i]]$file_ext
+    expected_file <- file.path(source_dir,paste0(file_name,file_ext))
+    if(choice %in% c("combine","both")){
+      combine_R_files(
+        source_dir = source_dir,
+        file_name = file_name,
+        file_ext = file_ext,
+        silent = silent,
+        overwrite = overwrite
+      )
+    }
+    if(choice %in% c("split","both")){
+      if(file.exists(source_dir)){
+        split_R_files(
+          source_dir = dev_dir,
+          destination_dir = source_dir,
+          file_name = file_name,
+          file_ext = file_ext,
+          silent = silent
+        )
+      }
+    }
+  }
+}
 #' @title combine_R_files
 #' @param source_dir a file path for your source (such as R folder)
 #' @param destination_dir a file path for your destination (such as dev folder)
@@ -15,20 +72,20 @@ combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir
     if(!silent)bullet_in_console("No folder",file = expected_folder)
     return(invisible())
   }
-  file_list <- list.files(source_dir, pattern = "\\.R$", full.names = TRUE)
-  combined_text <- character(0)
-  for (file in file_list) {# file <- file_list %>% sample(1)
-    file_name <- tools::file_path_sans_ext(basename(file))
-    header <- paste0("# ", file_name, " ")
-    header <- paste0(header,  paste0(rep(header_symbol,80-nchar(header)), collapse=""))
-    combined_text <- c(combined_text, header,new_lines, readLines(file))
-  }
-  dir.create(destination_dir,showWarnings = F,recursive = T)
-  if(!silent)message(length(combined_text)," lines")
-  combined_text <-paste(combined_text, collapse = "\n")
-  combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
   destination_file <- file.path(destination_dir, paste0(file_name,file_ext))
   if(!file.exists(destination_file)||overwrite){
+    dir.create(destination_dir,showWarnings = F,recursive = T)
+    file_list <- list.files(source_dir, pattern = "\\.R$", full.names = TRUE)
+    combined_text <- character(0)
+    for (file in file_list) {# file <- file_list %>% sample(1)
+      file_name <- tools::file_path_sans_ext(basename(file))
+      header <- paste0("# ", file_name, " ")
+      header <- paste0(header,  paste0(rep(header_symbol,80-nchar(header)), collapse=""))
+      combined_text <- c(combined_text, header,new_lines, readLines(file))
+    }
+    if(!silent)message(length(combined_text)," lines")
+    combined_text <-paste(combined_text, collapse = "\n")
+    combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
     writeLines(combined_text, destination_file)
     if(!silent)bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
   }
