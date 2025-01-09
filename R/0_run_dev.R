@@ -366,7 +366,6 @@ fast_commit <- function(message = "dev", push = F){
 }
 #' @title bump_version
 #' @description bump version
-#' @param message character string for commit message
 #' @inheritParams usethis::use_version
 #' @return bump
 #' @export

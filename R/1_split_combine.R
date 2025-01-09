@@ -216,7 +216,7 @@ pkg_combine_R_files <- function(pkgs, destination_dir=getwd(),file_name_type="na
   if(length(pkgs_missing)>0) message("Packages STILL missing: ",pkgs_missing %>% paste0(collapse = ", "))
 }
 #' @title pkg_combine_R_files_launch
-#' @param pkgs package name(s) as character string
+#' @param pkg package name as character string
 #' @param file_name_type character string of type file_name: "name__version" or "name"
 #' @return message
 #' @export

@@ -9,8 +9,6 @@ bump_version(which = "dev")
 \arguments{
 \item{which}{A string specifying which level to increment, one of: "major",
 "minor", "patch", "dev". If \code{NULL}, user can choose interactively.}
-
-\item{message}{character string for commit message}
 }
 \value{
 bump

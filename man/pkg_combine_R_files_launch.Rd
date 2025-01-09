@@ -15,9 +15,9 @@ pkg_combine_R_files_launch(
 )
 }
 \arguments{
-\item{file_name_type}{character string of type file_name: "name__version" or "name"}
+\item{pkg}{package name as character string}
 
-\item{pkgs}{package name(s) as character string}
+\item{file_name_type}{character string of type file_name: "name__version" or "name"}
 }
 \value{
 message
