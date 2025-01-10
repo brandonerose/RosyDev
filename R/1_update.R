@@ -68,6 +68,17 @@ dev_update <- function(
     bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
   }
 }
+#' @title dev_pull_and_update
+#' @description Update package from combined.R by documenting and combining files again
+#' @param silent logical for messages
+#' @return message
+#' @export
+dev_pull_and_update <- function(
+    silent = FALSE
+){
+  usethis:::git_pull()
+  RosyDev::dev_update(silent = silent,overwrite = TRUE)
+}
 #' @title dev_document
 #' @description document
 #' @return message

@@ -1,13 +1,11 @@
 # refresh packages =============================================================
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
+RosyDev::dev_pull_and_update()
 .rs.restartR()
 # LOAD =========================================================================
 RosyUtils::clear_env()
 Rosyverse::load_all()
-# pull first =========================
-usethis:::git_pull()
-RosyDev::dev_update(overwrite = T)# for when you pull a new update from github
 # Setup ========================================================================
 pkg_dir <- getwd()
 pkg_name <- basename(pkg_dir)
@@ -17,9 +15,9 @@ RosyUtils::view_file(pkg_dir)
 # RosyUtils::view_file(dev_dir)
 # RosyUtils::view_file(test_dir)
 RosyDev::setup_RosyDev(
-  overwrite = F, # be careful will overwrite certain files
-  use_golem = F,
-  launch_files = T
+  overwrite = FALSE, # be careful will overwrite certain files
+  use_golem = FALSE,
+  launch_files = TRUE
 )
 # document =====================================================================
 RosyDev::bump_version(which = "dev")
@@ -28,14 +26,15 @@ RosyDev::dev_document()
 RosyDev::dev_update()
 RosyDev::fast_commit(
   message = "dev",
-  push = T
+  push = TRUE
 )
 #other =========================================================================
 devtools::test()
-codetools::checkUsagePackage("RosyREDCap", suppressLocal = TRUE)
+codetools::checkUsagePackage("your_package_here", suppressLocal = TRUE)
 devtools::check_man()
 covrpage::covrpage()
 checkhelper::check_as_cran()
+goodpractice::goodpractice()
 # checkhelper::get_notes()
 # checkhelper::print_globals()
 covr::package_coverage(path = getwd())
@@ -62,7 +61,7 @@ extract_function_calls <- function(file) {
 }
 x<-extract_function_definitions("dev/combined.R")
 x[dw(x)]
-get_external_functions("RosyREDCap") %>% vec_cat("- ")
+get_external_functions("your_package_here") %>% vec_cat("- ")
 
 #other2 =========================================================================
 
