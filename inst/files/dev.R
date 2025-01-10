@@ -17,7 +17,7 @@ RosyUtils::view_file(pkg_dir)
 RosyDev::setup_RosyDev(
   overwrite = FALSE, # be careful will overwrite certain files
   use_golem = FALSE,
-  launch_files = TRUE
+  launch_files = FALSE
 )
 # document =====================================================================
 RosyDev::bump_version(which = "dev")

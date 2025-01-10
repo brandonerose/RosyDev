@@ -56,7 +56,7 @@ setup_RosyDev <- function(
       overwrite = overwrite
     )
     if(was_copied){
-      if(basename(copy_these[i])%in%c("README.Rmd","test_prod.R")){
+      if(basename(copy_these[i])%in%c("dev.R","README.Rmd","test_prod.R")){
         RosyUtils::replace_word_file(
           file = paste_here[i],
           pattern = "your_package_here",
