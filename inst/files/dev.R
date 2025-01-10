@@ -1,10 +1,10 @@
-# refresh packages =============================================================
+# refresh  ================================================================
+RosyUtils::clear_env()
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
 RosyDev::dev_pull_and_update()
 .rs.restartR()
 # LOAD =========================================================================
-RosyUtils::clear_env()
 Rosyverse::load_all()
 # Setup ========================================================================
 pkg_dir <- getwd()
