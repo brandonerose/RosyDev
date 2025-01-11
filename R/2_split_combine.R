@@ -108,7 +108,7 @@ split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir
   split_indices <- as.list(split_indices)
   scripts <- NULL
   while (length(split_indices)>0) {
-    script_name <- gsub(paste0("#| |", header_symbol), "", file_content[split_indices[[1]]]) %>% validate_env_name()
+    script_name <- gsub(paste0("#| |", header_symbol), "", file_content[split_indices[[1]]])
     start_index <- split_indices[[1]]+1
     if(length(split_indices)==1){
       end_index <- length(file_content)
