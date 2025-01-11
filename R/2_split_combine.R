@@ -32,7 +32,6 @@ dev_combine_split_R_files <- function(choice = "combine",silent = FALSE, overwri
     source_dir <- param_list[[i]]$source_dir
     file_name <- param_list[[i]]$file_name
     file_ext <- param_list[[i]]$file_ext
-    expected_file <- file.path(source_dir,paste0(file_name,file_ext))
     if(choice %in% c("combine","both")){
       combine_R_files(
         source_dir = source_dir,
@@ -104,9 +103,12 @@ split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir
   dir.create(destination_dir,showWarnings = FALSE,recursive = TRUE)
   file_content <- readLines(expected_file)
   split_indices <- grep(paste0("^# .* ",paste0(rep(header_symbol,4),collapse=""), collapse=""), file_content)
+  script_names <- gsub(paste0("#| |",header_symbol), "", file_content[split_indices])
+  if(anyDuplicated(script_names))stop("You have duplicate script names! --> ",as_comma_string(RosyUtils::vec_which_duplicated(script_names)))
   split_indices <- as.list(split_indices)
   scripts <- NULL
   while (length(split_indices)>0) {
+    script_name <- gsub(paste0("#| |", header_symbol), "", file_content[split_indices[[1]]]) %>% validate_env_name()
     start_index <- split_indices[[1]]+1
     if(length(split_indices)==1){
       end_index <- length(file_content)
@@ -118,12 +120,11 @@ split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir
     }else{
       out_lines <- file_content[start_index:end_index]
     }
-    scripts[[gsub(paste0("#| |",header_symbol), "", file_content[split_indices[[1]]])]] <- out_lines
+    scripts[[script_name]] <- out_lines
     split_indices[[1]] <- NULL
   }
-  if(anyDuplicated(names(scripts)))stop("You have duplicate script names! --> ",as_comma_string(which(duplicated(names(scripts)))))
   for(i in seq_along(scripts)){
-    output_file <- file.path(destination_dir, paste0(names(scripts)[i], ".R"))
+    output_file <- file.path(destination_dir, paste0(names(scripts)[i], file_ext))
     writeLines(
       new_lines %>% append(scripts[[i]]) %>%paste0(collapse = "\n"),
       con = output_file
