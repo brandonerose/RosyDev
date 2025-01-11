@@ -19,27 +19,35 @@ RosyDev::setup_RosyDev(
   use_golem = FALSE,
   launch_files = FALSE
 )
+RosyUtils::view_file(pkg_dir)
+# RosyUtils::view_file(dev_dir)
+RosyDev::pkg_dev_nav_combined()
 # update =======================================================================
 RosyDev::dev_update()
-RosyDev::fast_commit(message = "dev")
+RosyDev::fast_commit()
+# quick checks =================================================================
+devtools::test()
+devtools::check_man()
+# devtools::check()
+# devtools::build()
 # document =====================================================================
-RosyDev::dev_document()
-
-
 RosyDev::bump_version(which = "dev")
+ #usethis::use_version(which = "dev")
+devtools::build_readme()
+RosyDev::dev_document()
 # update and push ==============================================================
 RosyDev::dev_update()
-RosyDev::fast_commit(
-  message = "dev",
-  push = FALSE
-)
-#other =========================================================================
+RosyDev::fast_commit(push = TRUE)
+# more checks ==================================================================
 devtools::test()
 codetools::checkUsagePackage("your_package_here", suppressLocal = TRUE)
 devtools::check_man()
 covrpage::covrpage()
 checkhelper::check_as_cran()
 goodpractice::goodpractice()
+pkgdown::build_site_github_pages()
+RosyDev::run_test_dev()
+RosyDev::run_test_prod()
 # checkhelper::get_notes()
 # checkhelper::print_globals()
 covr::package_coverage(path = getwd())
@@ -52,7 +60,6 @@ missing_export_and_return <- function_check$topic[which(function_check$test_has_
 missing_export_or_nord <- function_check$topic[which(function_check$test_has_export_or_has_nord =="not_ok")] %>% unique()
 if(length(missing_export_and_return)>0)RosyUtils::vec_cat(missing_export_and_return)
 if(length(missing_export_or_nord)>0)RosyUtils::vec_cat(missing_export_or_nord)
-
 extract_function_calls <- function(file) {
   parsed <- parse(file)
   calls <- sapply(parsed, function(x) {
@@ -67,17 +74,6 @@ extract_function_calls <- function(file) {
 x<-extract_function_definitions("dev/combined.R")
 x[dw(x)]
 get_external_functions("your_package_here") %>% vec_cat("- ")
-
-#other2 =========================================================================
-
-devtools::build_readme()
-usethis::use_version(which = "dev")
-pkgdown::build_site_github_pages()
-devtools::check()
-devtools::build()
-RosyDev::run_test_dev()
-RosyDev::run_test_prod()
-
 #open files ====================================================================
 
 RosyUtils::view_file(pkg_dir)
@@ -88,3 +84,7 @@ RosyDev::pkg_dev_nav_dev()
 RosyDev::pkg_dev_nav_setup()
 RosyDev::pkg_dev_nav_test_dev()
 RosyDev::pkg_dev_nav_test_prod()
+
+# scrap ========================================================================
+
+

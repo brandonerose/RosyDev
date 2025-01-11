@@ -7,7 +7,7 @@ pkg_dev_nav <- function(name = NULL,pane = TRUE){
   path <- dev_dir <- file.path(getwd(),"dev")
   test_dir <- file.path(dev_dir,"test_dir")
   if(is.null(name))print(list.files(dev_dir))
-  allowed_names <- c("combined.R","setup.R","dev.R","test_dev.R","test_prod.R","test_dir")
+  allowed_names <- c("combined.R","vignettes.R", "tests.R","setup.R","dev.R","test_dev.R","test_prod.R","test_dir")
   if(name%in%allowed_names){
     path <- file.path(path,name)
     launch_dir <- dev_dir
@@ -23,6 +23,8 @@ pkg_dev_nav <- function(name = NULL,pane = TRUE){
 #' @return file opens in RStudio
 #' @export
 pkg_dev_nav_combined <- function(pane = TRUE){
+  pkg_dev_nav("vignettes.R",pane = FALSE)
+  pkg_dev_nav("tests.R",pane = FALSE)
   pkg_dev_nav("combined.R")
 }
 #' @title pkg_dev_nav_setup
@@ -66,6 +68,8 @@ file_paths_dev <- function(){
       file.path(dev_dir,"dev.R"),
       file.path(dev_dir,"test_dev.R"),
       file.path(dev_dir,"test_prod.R"),
+      file.path(dev_dir,"vignettes.R"),
+      file.path(dev_dir,"tests.R"),
       file.path(dev_dir,"combined.R")
     )
   )
