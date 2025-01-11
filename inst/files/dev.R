@@ -1,9 +1,10 @@
-# refresh  =====================================================================
+# refresh packages  ============================================================
 RosyUtils::clear_env()
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
-RosyDev::dev_pull_and_update()
 .rs.restartR()
+# RESET DEV FILES ==============================================================
+RosyDev::dev_pull_and_update()
 # LOAD =========================================================================
 Rosyverse::load_all()
 # Setup ========================================================================
