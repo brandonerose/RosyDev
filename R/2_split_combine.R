@@ -32,13 +32,16 @@ dev_combine_split_R_files <- function(choice = "combine",silent = FALSE, overwri
     source_dir <- param_list[[i]]$source_dir
     file_name <- param_list[[i]]$file_name
     file_ext <- param_list[[i]]$file_ext
+    max_new_lines <- 0
+    if(file_name == "vignettes")max_new_lines <- NULL
     if(choice %in% c("combine","both")){
       combine_R_files(
         source_dir = source_dir,
         file_name = file_name,
         file_ext = file_ext,
         silent = silent,
-        overwrite = overwrite
+        overwrite = overwrite,
+        max_new_lines = max_new_lines
       )
     }
     if(choice %in% c("split","both")){
@@ -84,7 +87,9 @@ combine_R_files <- function(source_dir = file.path(getwd(),"R"), destination_dir
     }
     if(!silent)message(length(combined_text)," lines")
     combined_text <-paste(combined_text, collapse = "\n")
-    combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
+    if(!is.null(max_new_lines)){
+      combined_text <- gsub(paste0("\\n{",max_new_lines+2,",}"), "\n", combined_text)
+    }
     writeLines(combined_text, destination_file)
     if(!silent)bullet_in_console("Combined file saved to:",file = destination_file,bullet_type = "v")
   }
