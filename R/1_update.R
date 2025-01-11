@@ -180,7 +180,8 @@ add_to_sysdata <- function(..., silent = FALSE,overwrite = FALSE){
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message = "dev", push = FALSE){
+fast_commit <- function(message, push = FALSE){
+  if(missing(message))message <- readline("Enter git message")
   usethis::use_git(message = message)
   if(push){
     usethis:::git_push()

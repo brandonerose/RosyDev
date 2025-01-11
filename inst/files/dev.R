@@ -1,4 +1,4 @@
-# refresh  ================================================================
+# refresh  =====================================================================
 RosyUtils::clear_env()
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
@@ -19,14 +19,19 @@ RosyDev::setup_RosyDev(
   use_golem = FALSE,
   launch_files = FALSE
 )
+# update =======================================================================
+RosyDev::dev_update()
+RosyDev::fast_commit(message = "dev")
 # document =====================================================================
-RosyDev::bump_version(which = "dev")
 RosyDev::dev_document()
+
+
+RosyDev::bump_version(which = "dev")
 # update and push ==============================================================
 RosyDev::dev_update()
 RosyDev::fast_commit(
   message = "dev",
-  push = TRUE
+  push = FALSE
 )
 #other =========================================================================
 devtools::test()
