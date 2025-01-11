@@ -270,6 +270,6 @@ delete_combined_tests <- function(){
 delete_combined_vignettes <- function(){
   if(!usethis:::is_package())stop("Your wd is not a package!")
   RosyUtils::delete_file(
-    path = file.path(getwd(),"dev","vignettes.R")
+    path = file.path(getwd(),"dev","vignettes.Rmd")
   )
 }
