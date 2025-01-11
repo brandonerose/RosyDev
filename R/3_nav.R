@@ -60,19 +60,20 @@ file_paths_dev <- function(){
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
   dev_dir <- file.path(pkg_dir,"dev")
-  return(
-    c(
-      file.path(dev_dir,"setup.R"),
-      file.path(pkg_dir,"README.Rmd"),
-      file.path(pkg_dir,"NEWS.md"),
-      file.path(dev_dir,"dev.R"),
-      file.path(dev_dir,"test_dev.R"),
-      file.path(dev_dir,"test_prod.R"),
-      file.path(dev_dir,"vignettes.R"),
-      file.path(dev_dir,"tests.R"),
-      file.path(dev_dir,"combined.R")
-    )
-  )
+  file_paths <- NULL
+  for(file_path in c(file.path(dev_dir,"setup.R"),
+                     file.path(pkg_dir,"README.Rmd"),
+                     file.path(pkg_dir,"NEWS.md"),
+                     file.path(dev_dir,"dev.R"),
+                     file.path(dev_dir,"test_dev.R"),
+                     file.path(dev_dir,"test_prod.R"),
+                     file.path(dev_dir,"vignettes.R"),
+                     file.path(dev_dir,"tests.R"),
+                     file.path(dev_dir,"combined.R"))
+  ){
+    if(file.exists(file_path))file_paths <- append(file_paths,file_path)
+  }
+  return(file_paths)
 }
 show_clickable_devs <- function(){
   bullet_in_console("Click below to open dev files...")
