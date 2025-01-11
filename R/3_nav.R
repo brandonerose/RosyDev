@@ -26,6 +26,7 @@ pkg_dev_nav_combined <- function(pane = TRUE){
   pkg_dev_nav("vignettes.Rmd",pane = FALSE)
   pkg_dev_nav("tests.R",pane = FALSE)
   pkg_dev_nav("combined.R")
+  return(invisible())
 }
 #' @title pkg_dev_nav_setup
 #' @description Navigate to setup.R dev file in RStudio
@@ -33,6 +34,7 @@ pkg_dev_nav_combined <- function(pane = TRUE){
 #' @export
 pkg_dev_nav_setup <- function(){
   pkg_dev_nav("setup.R")
+  return(invisible())
 }
 #' @title pkg_dev_nav_dev
 #' @description Navigate to dev.R dev file in RStudio
@@ -40,6 +42,7 @@ pkg_dev_nav_setup <- function(){
 #' @export
 pkg_dev_nav_dev <- function(){
   pkg_dev_nav("dev.R")
+  return(invisible())
 }
 #' @title pkg_dev_nav_test_dev
 #' @description Navigate to dev.R dev file in RStudio
@@ -47,6 +50,7 @@ pkg_dev_nav_dev <- function(){
 #' @export
 pkg_dev_nav_test_dev <- function(){
   pkg_dev_nav("test_dev.R")
+  return(invisible())
 }
 #' @title pkg_dev_nav_test_dev
 #' @description Navigate to dev.R dev file in RStudio
@@ -54,6 +58,7 @@ pkg_dev_nav_test_dev <- function(){
 #' @export
 pkg_dev_nav_test_prod <- function(){
   pkg_dev_nav("test_prod.R")
+  return(invisible())
 }
 file_paths_dev <- function(){
   usethis:::check_is_package()
@@ -81,9 +86,11 @@ show_clickable_devs <- function(){
     names(file_path) <- basename(file_path)
     bullet_in_console(file = file_path,bullet_type = ifelse(file.exists(file_path), ">","x"))
   }
+  return(invisible())
 }
 launch_devs <- function(){
   for(file_path in file_paths_dev()){
     RosyUtils::view_file(file_path)
   }
+  return(invisible())
 }

@@ -121,6 +121,7 @@ split_R_files <- function(source_dir = file.path(getwd(),"dev"), destination_dir
     scripts[[gsub(paste0("#| |",header_symbol), "", file_content[split_indices[[1]]])]] <- out_lines
     split_indices[[1]] <- NULL
   }
+  if(anyDuplicated(names(scripts)))stop("You have duplicate script names! --> ",as_comma_string(which(duplicated(names(scripts)))))
   for(i in seq_along(scripts)){
     output_file <- file.path(destination_dir, paste0(names(scripts)[i], ".R"))
     writeLines(
