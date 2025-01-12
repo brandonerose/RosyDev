@@ -4,6 +4,8 @@ remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
 .rs.restartR()
 # RESET DEV FILES ==============================================================
+RosyDev::delete_combined()
+# RosyDev::delete_dev()
 RosyDev::dev_pull_and_update()
 # LOAD =========================================================================
 Rosyverse::load_all()
@@ -36,6 +38,8 @@ RosyDev::bump_version(which = "dev")
  #usethis::use_version(which = "dev")
 devtools::build_readme()
 RosyDev::dev_document()
+styler::style_file(path = "combined.R")
+lintr::lint(filename = "combined.R")
 # update and push ==============================================================
 RosyDev::dev_update()
 RosyDev::fast_commit(push = TRUE)
