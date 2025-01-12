@@ -4,7 +4,7 @@
 \alias{dev_pull_and_update}
 \title{dev_pull_and_update}
 \usage{
-dev_pull_and_update(silent = FALSE)
+dev_pull_and_update(silent = FALSE, and_delete_dev = TRUE)
 }
 \arguments{
 \item{silent}{logical for messages}

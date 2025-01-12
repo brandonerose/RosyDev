@@ -6,7 +6,7 @@ Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
 # RESET DEV FILES ==============================================================
 RosyDev::delete_combined()
 # RosyDev::delete_dev()
-RosyDev::dev_pull_and_update()
+RosyDev::dev_pull_and_update() # will delete dev and over write combined
 # LOAD =========================================================================
 Rosyverse::load_all()
 # Setup ========================================================================
@@ -42,7 +42,7 @@ styler::style_file(path = "dev/combined.R")
 lintr::lint(filename = "dev/combined.R")
 # update and push ==============================================================
 RosyDev::dev_update()
-RosyDev::fast_commit(push = TRUE)
+RosyDev::fast_commit(message = "dev",push = TRUE)
 # more checks ==================================================================
 devtools::test()
 codetools::checkUsagePackage("your_package_here", suppressLocal = TRUE)

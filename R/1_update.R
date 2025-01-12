@@ -73,9 +73,12 @@ dev_update <- function(
 #' @return message
 #' @export
 dev_pull_and_update <- function(
-    silent = FALSE) {
+    silent = FALSE,
+    and_delete_dev = TRUE
+    ) {
   usethis:::git_pull()
-  RosyDev::dev_update(silent = silent, overwrite = TRUE)
+  if(and_delete_dev)delete_dev()
+  dev_update(silent = silent, overwrite = TRUE)
 }
 #' @title dev_document
 #' @description document
