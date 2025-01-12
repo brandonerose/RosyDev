@@ -78,6 +78,7 @@ dev_pull_and_update <- function(
     ) {
   usethis:::git_pull()
   if(and_delete_dev)delete_dev()
+  setup_RosyDev()
   dev_update(silent = silent, overwrite = TRUE)
 }
 #' @title dev_document
