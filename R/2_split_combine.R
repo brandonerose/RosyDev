@@ -312,7 +312,7 @@ find_imported_functions <- function(file_path="dev/combined.R") {
   }
   lines <- readLines(file_path, warn = FALSE)
   written_functions <- lines %>%
-    regmatches(gregexpr(pattern, lines, perl = TRUE)) %>%
+    regmatches(gregexpr("[A-Za-z]+::[a-zA-Z_]+", lines, perl = TRUE)) %>%
     unlist() %>% unique() %>% sort()
   return(written_functions)
 }
