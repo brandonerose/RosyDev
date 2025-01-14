@@ -75,7 +75,7 @@ dev_update <- function(
 dev_pull_and_update <- function(
     silent = FALSE,
     and_delete_dev = TRUE
-    ) {
+) {
   usethis:::git_pull()
   if(and_delete_dev)delete_dev()
   setup_RosyDev()

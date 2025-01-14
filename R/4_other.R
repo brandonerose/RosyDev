@@ -2,14 +2,14 @@
 #' @param pkgs character vector of pkgs
 #' @export
 check_namespace_conflicts <- function(pkgs, ignores = c(
-                                        "%>%",
-                                        "pkg_date",
-                                        "pkg_version",
-                                        "pkg_name",
-                                        ".__NAMESPACE__.",
-                                        ".__S3MethodsTable__.",
-                                        ".packageName"
-                                      )) {
+  "%>%",
+  "pkg_date",
+  "pkg_version",
+  "pkg_name",
+  ".__NAMESPACE__.",
+  ".__S3MethodsTable__.",
+  ".packageName"
+)) {
   # pkgs <- pkgs %>% sort()
   x <- NULL
   for (pkg in pkgs) {

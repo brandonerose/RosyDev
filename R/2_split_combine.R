@@ -303,3 +303,22 @@ pkg_combine_R_files_launch <- function(pkg, destination_dir = tempdir(), file_na
     launch_file = 1
   )
 }
+#' @title find_imported_functions
+#' @return functions
+#' @export
+find_imported_functions <- function(file_path="dev/combined.R") {
+  if (!file.exists(file_path)) {
+    stop("The specified file does not exist.")
+  }
+  lines <- readLines(file_path, warn = FALSE)
+  written_functions <- regmatches(
+    x = lines,
+    m = gregexpr(
+      pattern = "\\b[A-Z]+::[a-zA-Z_]+\\b",
+      text = lines,
+      perl = TRUE
+    )
+  )
+  written_functions <- sort(unique(unlist(written_functions)))
+  return(written_functions)
+}
