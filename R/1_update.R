@@ -168,17 +168,7 @@ add_to_sysdata <- function(..., silent = FALSE, overwrite = FALSE) {
     if (!silent) ifelse(object_name %in% objects(envir = temp_env), "Updated: ", "Added: ") %>% message(object_name)
     assign(object_name, get(object_name, envir = parent.frame()), envir = temp_env)
   }
-  mapply(
-    save,
-    list = names(temp_env),
-    file =file.path("R","sysdata.rda"),
-    MoreArgs = list(
-      envir = temp_env,
-      compress = "bzip2",
-      version = 3,
-      ascii = FALSE
-    )
-  )
+  save(list = names(temp_env), file = path, envir = temp_env, compress = "bzip2", version = 3,ascii = FALSE)
   if (!silent) message("RosyDev saved: ", names(temp_env) %>% paste0(collapse = ", "))
 }
 #' @title Fast Commit
