@@ -6,8 +6,8 @@
 \usage{
 check_namespace_conflicts(
   pkgs,
-  ignores = c("\%>\%", "pkg_date", "pkg_name", ".__NAMESPACE__.", ".__S3MethodsTable__.",
-    ".packageName")
+  ignores = c("\%>\%", "pkg_date", "pkg_version", "pkg_name", ".__NAMESPACE__.",
+    ".__S3MethodsTable__.", ".packageName")
 )
 }
 \arguments{

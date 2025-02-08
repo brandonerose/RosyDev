@@ -4,7 +4,7 @@
 check_namespace_conflicts <- function(pkgs, ignores = c(
   "%>%",
   "pkg_date",
-  # "pkg_version",
+  "pkg_version",
   "pkg_name",
   ".__NAMESPACE__.",
   ".__S3MethodsTable__.",
