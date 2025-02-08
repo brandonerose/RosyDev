@@ -59,7 +59,7 @@ dev_update <- function(
   }
   if (use_internal_pkg) {
     pkg_date <- Sys.Date()
-    usethis::use_data(pkg_name,pkg_version, pkg_date,internal = TRUE,overwrite = TRUE,version = 3)
+    add_to_sysdata(pkg_name,pkg_version, pkg_date)
   }
   show_clickable_devs()
   write.csv(update_log, file = "dev/update_log.csv", row.names = FALSE)
