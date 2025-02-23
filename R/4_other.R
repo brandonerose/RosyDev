@@ -216,7 +216,7 @@ wrap_roxygen_text <- function(file_path = "dev/combined.R", width = 80) {
   for (line in lines) {
     if (startsWith(line,"#'")) {
       if(nchar(line)>80){
-        line <- wrap_string_to_lines2(text = line,max_length = 80,spacer = "#' ")
+        line <- RosyUtils::wrap_string_to_lines2(text = line,width = 80,spacer = "#' ")
       }
     }
     new_lines <- c(new_lines, line)
