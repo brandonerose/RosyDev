@@ -40,9 +40,10 @@ devtools::build_readme()
 RosyDev::dev_document()
 styler::style_file(path = "dev/combined.R")
 lintr::lint(filename = "dev/combined.R")
+RosyDev::reflow_roxygen()
 # update and push ==============================================================
 RosyDev::dev_update()
-RosyDev::fast_commit(push = TRUE)
+RosyDev::fast_commit(message = "dev",push = TRUE)
 # more checks ==================================================================
 devtools::test()
 codetools::checkUsagePackage("your_package_here", suppressLocal = TRUE)
