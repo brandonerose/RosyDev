@@ -222,7 +222,7 @@ wrap_roxygen_text <- function(file_path = "dev/combined.R", width = 80) {
     new_lines <- c(new_lines, line)
   }
   writeLines(new_lines, file_path)
-  bullet_in_console("Weapped roxygen!",bullet_type = "v")
+  bullet_in_console("Wrapped roxygen!",bullet_type = "v")
 }
 #' @title remove_trailing_whitespace
 #' @export
