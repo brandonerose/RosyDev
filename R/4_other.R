@@ -208,3 +208,19 @@ dev_function_freq <- function() {
     data.frame() %>%
     return()
 }
+#' @title reflow_roxygen
+#' @export
+reflow_roxygen <- function(file_path = "dev/combined.R", width = 80) {
+  lines <- readLines(file_path)
+  new_lines <- c()
+  for (line in lines) {
+    if (startsWith(line,"#'")) {
+      if(nchar(line)>80){
+        line <- wrap_string_to_lines2(text = line,max_length = 80,spacer = "#' ")
+      }
+    }
+    new_lines <- c(new_lines, line)
+  }
+  writeLines(new_lines, file_path)
+  bullet_in_console("Fixed roxygen!",bullet_type = "v")
+}
