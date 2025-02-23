@@ -208,9 +208,9 @@ dev_function_freq <- function() {
     data.frame() %>%
     return()
 }
-#' @title reflow_roxygen
+#' @title wrap_roxygen_text
 #' @export
-reflow_roxygen <- function(file_path = "dev/combined.R", width = 80) {
+wrap_roxygen_text <- function(file_path = "dev/combined.R", width = 80) {
   lines <- readLines(file_path)
   new_lines <- c()
   for (line in lines) {
@@ -222,5 +222,11 @@ reflow_roxygen <- function(file_path = "dev/combined.R", width = 80) {
     new_lines <- c(new_lines, line)
   }
   writeLines(new_lines, file_path)
-  bullet_in_console("Fixed roxygen!",bullet_type = "v")
+  bullet_in_console("Weapped roxygen!",bullet_type = "v")
+}
+#' @title remove_trailing_whitespace
+#' @export
+remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
+  writeLines(gsub("\\s+$", "", readLines(file_path)) , file_path)
+  bullet_in_console("Cleaned whitespaces!",bullet_type = "v")
 }
