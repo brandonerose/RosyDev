@@ -186,7 +186,7 @@ dev_show_duplicated_functions <- function() {
   all_functions <- all_functions[which(duplicated(all_functions))] %>%
     unique() %>%
     sort(decreasing = TRUE)
-  if (length(all_functions) == 0) bullet_in_console("No duplicated functions", bullet_type = "v")
+  if (length(all_functions) == 0) cli_alert_wrap("No duplicated functions", bullet_type = "v")
   return(all_functions)
 }
 #' @title dev_function_freq
@@ -222,11 +222,11 @@ wrap_roxygen_text <- function(file_path = "dev/combined.R", width = 80) {
     new_lines <- c(new_lines, line)
   }
   writeLines(new_lines, file_path)
-  bullet_in_console("Wrapped roxygen!",bullet_type = "v")
+  cli_alert_wrap("Wrapped roxygen!",bullet_type = "v")
 }
 #' @title remove_trailing_whitespace
 #' @export
 remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
   writeLines(gsub("\\s+$", "", readLines(file_path)) , file_path)
-  bullet_in_console("Cleaned whitespaces!",bullet_type = "v")
+  cli_alert_wrap("Cleaned whitespaces!",bullet_type = "v")
 }

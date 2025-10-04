@@ -83,10 +83,10 @@ file_paths_dev <- function() {
   return(file_paths)
 }
 show_clickable_devs <- function() {
-  bullet_in_console("Click below to open dev files...")
+  cli_alert_wrap("Click below to open dev files...")
   for (file_path in file_paths_dev()) {
     names(file_path) <- basename(file_path)
-    bullet_in_console(file = file_path, bullet_type = ifelse(file.exists(file_path), ">", "x"))
+    cli_alert_wrap(file = file_path, bullet_type = ifelse(file.exists(file_path), ">", "x"))
   }
   return(invisible())
 }

@@ -64,7 +64,7 @@ dev_update <- function(
   show_clickable_devs()
   write.csv(update_log, file = "dev/update_log.csv", row.names = FALSE)
   if (due_for_update) {
-    bullet_in_console("Due for documentation update: `RosyDev::dev_document()`")
+    cli_alert_wrap("Due for documentation update: `RosyDev::dev_document()`")
   }
 }
 #' @title dev_pull_and_update
@@ -193,11 +193,11 @@ fast_commit <- function(message, push = FALSE) {
       blank <- "......................."
       mesge <- "Project info/code here:"
       for (u in url) {
-        bullet_in_console(ifelse(i == 1, mesge, blank), url = u)
+        cli_alert_wrap(ifelse(i == 1, mesge, blank), url = u)
         i <- i + 1
       }
     } else {
-      bullet_in_console("Project info/code here:", file = getwd())
+      cli_alert_wrap("Project info/code here:", file = getwd())
     }
   }
 }

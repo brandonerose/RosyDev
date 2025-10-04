@@ -71,7 +71,7 @@ combine_R_files <- function(source_dir = file.path(getwd(), "R"), destination_di
   if (!file_ext %in% c(".R", ".Rmd")) stop("file_ext must be R or Rmd")
   expected_folder <- file.path(source_dir)
   if (!file.exists(expected_folder)) {
-    if (!silent) bullet_in_console("No folder", file = expected_folder)
+    if (!silent) cli_alert_wrap("No folder", file = expected_folder)
     return(invisible())
   }
   destination_file <- file.path(destination_dir, paste0(file_name, file_ext))
@@ -91,7 +91,7 @@ combine_R_files <- function(source_dir = file.path(getwd(), "R"), destination_di
       combined_text <- gsub(paste0("\\n{", max_new_lines + 2, ",}"), "\n", combined_text)
     }
     writeLines(combined_text, destination_file)
-    if (!silent) bullet_in_console("Combined file saved to:", file = destination_file, bullet_type = "v")
+    if (!silent) cli_alert_wrap("Combined file saved to:", file = destination_file, bullet_type = "v")
   }
 }
 #' @title split_R_files
@@ -102,7 +102,7 @@ split_R_files <- function(source_dir = file.path(getwd(), "dev"), destination_di
   if (!file_ext %in% c(".R", ".Rmd")) stop("file_ext must be R or Rmd")
   expected_file <- file.path(source_dir, paste0(file_name, file_ext))
   if (!file.exists(expected_file)) {
-    bullet_in_console("No file", file = expected_file)
+    cli_alert_wrap("No file", file = expected_file)
     return(invisible())
   }
   dir.create(destination_dir, showWarnings = FALSE, recursive = TRUE)
