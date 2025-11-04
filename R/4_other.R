@@ -230,3 +230,88 @@ remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
   writeLines(gsub("\\s+$", "", readLines(file_path)) , file_path)
   cli_alert_wrap("Cleaned whitespaces!",bullet_type = "v")
 }
+#' @title pkg_net_mod
+#' @export
+pkg_net_mod <- function(pkg_name,
+                        static = FALSE,
+                        hierarchical = FALSE,
+                        render = TRUE) {
+  result <- pkgnet::CreatePackageReport(pkg_name)
+  #supress
+  nodes <- result$FunctionReporter$nodes
+  imported <- nodes$node[which(!nodes$isExported)]
+  nodes <- nodes[which(nodes$isExported),]
+  edges <- result$FunctionReporter$edges
+  edges <- edges[which(!edges$SOURCE%in%imported|!edges$TARGET%in%imported),]
+  OUT <- NULL
+  OUT$node_df <- data.frame(
+    id = nodes$node,
+    name = nodes$node,
+    label = nodes$node
+  )
+  OUT$edge_df <- data.frame(
+    from = edges$SOURCE,
+    to = edges$TARGET
+  )
+  OUT$node_df$physics <- T
+  visNetwork::visNetwork(
+    nodes =  OUT$node_df,
+    edges = OUT$edge_df
+  )
+  # OUT$node_df$physics[which(OUT$node_df$group =="project")] <- F
+  if(static){
+    OUT$node_df$shape[which(OUT$node_df$shape=="box")] <- "rectangle"
+    OUT$node_df$shape[which(OUT$node_df$shape=="ellipse")] <- "circle"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="title")] <- "tooltip"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="group")] <- "type"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="color.border")] <- "color"
+    colnames(OUT$node_df)[which(colnames(OUT$node_df)=="font.color")] <- "fontcolor"
+    OUT$node_df$fillcolor <- OUT$node_df$color.background
+    # node_df$color.highlight <- "gold"
+    OUT$node_df$tooltip <-gsub("<br>","\\\n",OUT$node_df$tooltip) %>% remove_html_tags()
+    if(is_something(OUT$edge_df))colnames(OUT$edge_df)[which(colnames(OUT$edge_df)=="width")] <- "penwidth"
+    graph <- DiagrammeR::create_graph(
+      nodes_df =  OUT$node_df,
+      edges_df = OUT$edge_df
+    )
+    rendered_graph <- DiagrammeR::render_graph(
+      graph,
+      title = DB$redcap$project_info$project_title,
+      output = "graph"
+    )
+  }else{
+    OUT$node_df$type <- OUT$node_df$group
+    rendered_graph <- visNetwork::visNetwork(
+      nodes =  OUT$node_df,
+      edges = OUT$edge_df
+      # main = DB$redcap$project_info$project_title,
+      # submain = DB$redcap$project_info$project_notes %>%
+      #   paste0("<br>Code by Brandon Rose, M.D., M.P.H. at <a href='https://www.thecodingdocs.com/home'>TheCodingDocs.com</a> using <a href='https://github.com/brandonerose/rosyredcap'>RosyREDCap</a> and <a href='https://github.com/datastorm-open/visNetwork'>VisNetwork</a>")
+    ) %>%
+      visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
+      visNetwork::visLegend(main = "Legend") %>%
+      visNetwork::visLayout(hierarchical = hierarchical)
+    if(hierarchical){
+      rendered_graph <- rendered_graph %>% visNetwork::visHierarchicalLayout(direction = direction, levelSeparation = 300)
+    }
+    # if(include_fields){
+    #   groups <- "field"
+    #   if(include_choices) groups <- groups %>% append("choice")
+    #   rendered_graph <- rendered_graph %>% visNetwork::visClusteringByGroup(groups = groups)
+    # }
+    rendered_graph$x$options$groups <- rendered_graph$x$groups %>% sapply(function(group){
+      list(
+        shape=OUT$node_df$shape[which(OUT$node_df$group==group)[[1]]],
+        font = list(
+          color = OUT$node_df$font.color[which(OUT$node_df$group==group)[[1]]]
+        ),
+        color = list(
+          background = OUT$node_df$color.background[which(OUT$node_df$group==group)[[1]]],
+          border = OUT$node_df$color.border[which(OUT$node_df$group==group)[[1]]]
+        )
+      )
+    },simplify = F)
+  }
+  if(render) return(rendered_graph)
+  graph
+}
