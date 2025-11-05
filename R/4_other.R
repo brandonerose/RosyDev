@@ -267,7 +267,8 @@ pkg_net_mod <- function(pkg_name,
   if(!show_internal){
     imported <- OUT$node_df$node[which(!OUT$node_df$isExported)]
     OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported),]
-    OUT$node_df <- OUT$node_df[which(!OUT$node_df$SOURCE%in%imported|!OUT$node_df$TARGET%in%imported),]
+    OUT$node_df$group <- NULL
+    OUT$edge_df <- OUT$edge_df[which(!OUT$edge_df$SOURCE%in%imported|!OUT$edge_df$TARGET%in%imported),]
   }
   rendered_graph <- visNetwork::visNetwork(
     nodes =  OUT$node_df,
