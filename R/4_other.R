@@ -233,18 +233,12 @@ remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
 #' @title pkg_net_node_edges
 #' @export
 pkg_net_node_edges <- function(pkg_name,
-                               show_internal = FALSE,
                                physics = TRUE,
                                arrows = "to"){
   result <- pkgnet::CreatePackageReport(pkg_name)
   #supress
   nodes <- result$FunctionReporter$nodes
   edges <- result$FunctionReporter$edges
-  if(!show_internal){
-    imported <- nodes$node[which(!nodes$isExported)]
-    nodes <- nodes[which(nodes$isExported),]
-    edges <- edges[which(!edges$SOURCE%in%imported|!edges$TARGET%in%imported),]
-  }
   nodes$id <- nodes$node
   nodes$name <- nodes$node
   nodes$label <- nodes$node
@@ -267,10 +261,14 @@ pkg_net_mod <- function(pkg_name,
                         arrows = "to") {
   OUT <- pkg_net_node_edges(
     pkg_name = pkg_name,
-    show_internal = show_internal,
     physics = physics,
     arrows = arrows
   )
+  if(!show_internal){
+    imported <- OUT$node_df$node[which(!OUT$node_df$isExported)]
+    OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported),]
+    OUT$node_df <- OUT$node_df[which(!OUT$node_df$SOURCE%in%imported|!OUT$node_df$TARGET%in%imported),]
+  }
   rendered_graph <- visNetwork::visNetwork(
     nodes =  OUT$node_df,
     edges = OUT$edge_df

@@ -4,12 +4,7 @@
 \alias{pkg_net_node_edges}
 \title{pkg_net_node_edges}
 \usage{
-pkg_net_node_edges(
-  pkg_name,
-  show_internal = FALSE,
-  physics = TRUE,
-  arrows = "to"
-)
+pkg_net_node_edges(pkg_name, physics = TRUE, arrows = "to")
 }
 \description{
 pkg_net_node_edges
