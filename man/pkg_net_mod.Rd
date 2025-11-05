@@ -4,7 +4,7 @@
 \alias{pkg_net_mod}
 \title{pkg_net_mod}
 \usage{
-pkg_net_mod(pkg_name, static = FALSE, hierarchical = FALSE, render = TRUE)
+pkg_net_mod(pkg_name, show_internal = FALSE, physics = TRUE, arrows = "to")
 }
 \description{
 pkg_net_mod

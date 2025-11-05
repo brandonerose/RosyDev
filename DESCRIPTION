@@ -12,7 +12,6 @@ Depends:
 Imports: 
     attachment,
     devtools,
-    DiagrammeR,
     dplyr,
     golem,
     magrittr,
