@@ -249,6 +249,27 @@ pkg_net_node_edges <- function(pkg_name,
   edges$to <- edges$TARGET
   edges$arrows <- arrows
   nodes$orphan <- !(nodes$node %in% unique(c(edges$SOURCE,edges$TARGET)))
+  # build directed graph
+  g <-igraph::graph_from_data_frame(edges, vertices = nodes, directed = TRUE)
+  n <- igraph::vcount(g)
+  res <- rep(TRUE, n)  # assume all internal
+  # 1️⃣ Downstream contamination
+  for (i in seq_len(n)) {
+    reachable <- igraph::subcomponent(g, igraph::V(g)[i], mode = "out")
+    if (any(igraph::V(g)$isExported[reachable])) res[i] <- FALSE
+  }
+  # 2️⃣ Upstream contamination — if any isExported reaches internal
+  external_nodes <- which(igraph::V(g)$isExported)
+  if (length(external_nodes) > 0) {
+    contaminated <- logical(n)
+    for (ext in external_nodes) {
+      # all nodes reachable *from* this isExported node
+      downstream <- igraph::subcomponent(g, igraph::V(g)[ext], mode = "out")
+      contaminated[downstream] <- TRUE
+    }
+    res[contaminated] <- FALSE
+  }
+  nodes$only_internal_flow <- res[match(nodes$id, igraph::V(g)$name)]
   OUT$node_df <- nodes
   OUT$edge_df <- edges
   OUT
@@ -264,6 +285,12 @@ pkg_net_mod <- function(pkg_name,
     physics = physics,
     arrows = arrows
   )
+  pkg_net_node_edge_plot(OUT = OUT, show_internal = show_internal)
+}
+#' @title pkg_net_mod
+#' @export
+pkg_net_node_edge_plot <- function(OUT,
+                        show_internal = TRUE) {
   if(!show_internal){
     imported <- OUT$node_df$node[which(!OUT$node_df$isExported)]
     OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported),]
@@ -280,4 +307,15 @@ pkg_net_mod <- function(pkg_name,
     visNetwork::visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) %>%
     visNetwork::visLegend(main = "Legend")
   rendered_graph
+}
+
+#' @title pkg_net_internal_node_edge
+#' @export
+pkg_net_internal_node_edge <- function(pkg_name) {
+
+  print(nodes1$node[which(nodes1$only_internal_flow)])
+  list(
+    node_df = nodes,
+    edge_df = edges
+  )
 }
