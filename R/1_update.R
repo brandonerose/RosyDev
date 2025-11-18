@@ -8,6 +8,9 @@ dev_update <- function(
     silent = FALSE,
     is_production = FALSE,
     overwrite = FALSE) {
+  usethis:::check_is_package()
+  pkg_dir <- getwd()
+  pkg_name <- basename(pkg_dir)
   dev_combine_split_R_files(choice = "both", silent = silent, overwrite = overwrite)
   devtools::document()
   attachment::att_amend_desc()
