@@ -85,7 +85,10 @@ dev_pull_and_update <- function(
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update_commit_push <- function(message = "dev"){
+dev_update_commit_push <- function(silent = FALSE,
+                                   is_production = FALSE,
+                                   overwrite = FALSE,
+                                   message = "dev"){
   dev_update(silent = silent,
              is_production = is_production,
              overwrite = overwrite)

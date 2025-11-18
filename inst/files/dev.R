@@ -3,6 +3,9 @@ RosyUtils::clear_env()
 remotes::install_github("brandonerose/Rosyverse")
 Rosyverse::update_all()# remotes::install_github("brandonerose/Rosyverse")
 .rs.restartR()
+# Library ============
+library(RosyUtils)
+library(RosyDev)
 # RESET DEV FILES ==============================================================
 RosyDev::delete_combined()
 # RosyDev::delete_dev()
@@ -27,6 +30,7 @@ RosyDev::pkg_dev_nav_combined()
 # update =======================================================================
 RosyDev::dev_update()
 RosyDev::fast_commit()
+RosyDev::dev_update_commit_push()
 # Style ========================================================================
 lintr::lint(filename = "dev/combined.R")
 lintr::all_linters() %>% names()

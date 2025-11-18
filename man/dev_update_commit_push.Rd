@@ -4,7 +4,12 @@
 \alias{dev_update_commit_push}
 \title{dev_update_commit_push}
 \usage{
-dev_update_commit_push(message = "dev")
+dev_update_commit_push(
+  silent = FALSE,
+  is_production = FALSE,
+  overwrite = FALSE,
+  message = "dev"
+)
 }
 \arguments{
 \item{silent}{logical for messages}
