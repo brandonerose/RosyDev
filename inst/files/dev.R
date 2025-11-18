@@ -10,6 +10,7 @@ library(RosyDev)
 RosyDev::delete_combined()
 # RosyDev::delete_dev()
 RosyDev::dev_pull_and_update() # will delete dev and over write combined
+RosyDev::dev_update_commit_push()# will split from combine, commit and push
 # Setup ========================================================================
 Rosyverse::load_all()
 pkg_dir <- getwd()
