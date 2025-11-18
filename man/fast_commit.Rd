@@ -4,7 +4,7 @@
 \alias{fast_commit}
 \title{Fast Commit}
 \usage{
-fast_commit(message, push = FALSE)
+fast_commit(message = "dev", push = FALSE)
 }
 \arguments{
 \item{message}{Message to use for first commit.}

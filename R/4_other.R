@@ -308,11 +308,9 @@ pkg_net_node_edge_plot <- function(OUT,
     visNetwork::visLegend(main = "Legend")
   rendered_graph
 }
-
 #' @title pkg_net_internal_node_edge
 #' @export
 pkg_net_internal_node_edge <- function(pkg_name) {
-
   print(nodes1$node[which(nodes1$only_internal_flow)])
   list(
     node_df = nodes,

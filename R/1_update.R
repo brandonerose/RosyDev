@@ -6,7 +6,6 @@
 #' @export
 dev_update <- function(
     silent = FALSE,
-    use_internal_pkg = TRUE,
     is_production = FALSE,
     overwrite = FALSE) {
   dev_combine_split_R_files(choice = "both", silent = silent, overwrite = overwrite)
@@ -57,10 +56,10 @@ dev_update <- function(
       }
     }
   }
-  if (use_internal_pkg) {
-    pkg_date <- Sys.Date()
-    add_to_sysdata(pkg_name,pkg_version, pkg_date)
-  }
+  # if (use_internal_pkg) {
+  #   pkg_date <- Sys.Date()
+  #   add_to_sysdata(pkg_name,pkg_version, pkg_date)
+  # }
   show_clickable_devs()
   write.csv(update_log, file = "dev/update_log.csv", row.names = FALSE)
   if (due_for_update) {
@@ -80,6 +79,18 @@ dev_pull_and_update <- function(
   if(and_delete_dev)delete_dev()
   setup_RosyDev()
   dev_update(silent = silent, overwrite = TRUE)
+}
+#' @title dev_update_commit_push
+#' @description Update package from combined.R by documenting and combining files again
+#' @param silent logical for messages
+#' @return message
+#' @export
+dev_update_commit_push <- function(message = "dev"){
+  dev_update(silent = silent,
+             is_production = is_production,
+             overwrite = overwrite)
+  fast_commit(message = message, push = TRUE)
+  invisible()
 }
 #' @title dev_document
 #' @description document
@@ -177,7 +188,7 @@ add_to_sysdata <- function(..., silent = FALSE, overwrite = FALSE) {
 #' @inheritParams usethis::use_version
 #' @return commited git
 #' @export
-fast_commit <- function(message, push = FALSE) {
+fast_commit <- function(message = "dev", push = FALSE) {
   if (missing(message)) message <- readline("Enter git message --> ")
   usethis::use_git(message = message)
   if (push) {
