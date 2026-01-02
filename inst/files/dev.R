@@ -34,8 +34,13 @@ RosyDev::fast_commit()
 RosyDev::dev_update_commit_push()
 # Style ========================================================================
 lintr::lint(filename = "dev/combined.R")
-lintr::all_linters() %>% names()
-lintr::lint(filename = "dev/combined.R",linters = lintr::all_linters()[["object_name_linter"]])
+lintr::all_linters() |> names()
+RosyUtils::vec_cat(names(lintr::all_linters()),
+                   prefix = 'lintr::lint(filename = "dev/combined.R",linters = lintr::all_linters()[["',
+                   suffix = '"]])')
+RosyUtils::vec_cat(names(lintr::all_linters()),
+                   prefix = 'lintr::lint(filename = "dev/tests.R",linters = lintr::all_linters()[["',
+                   suffix = '"]])')
 styler::style_file(path = "dev/combined.R",strict = TRUE)
 formatR::tidy_dir(file = "R",width.cutoff = 80)
 styler::style_file(path = "dev/tests.R")
@@ -61,7 +66,6 @@ RosyDev::fast_commit(message = "dev",push = TRUE)
 devtools::test()
 codetools::checkUsagePackage("your_package_here", suppressLocal = TRUE)
 devtools::check_man()
-covrpage::covrpage()
 pkgdown::build_site_github_pages()
 RosyDev::run_test_dev()
 RosyDev::run_test_prod()
@@ -73,8 +77,8 @@ x<-checkhelper::find_missing_tags()
 data_check <- x$data
 function_check <- x$functions
 function_check <- function_check[which(function_check$test_has_export_and_return =="not_ok"|function_check$test_has_export_or_has_nord =="not_ok"),]
-missing_export_and_return <- function_check$topic[which(function_check$test_has_export_and_return =="not_ok")]%>% unique()
-missing_export_or_nord <- function_check$topic[which(function_check$test_has_export_or_has_nord =="not_ok")] %>% unique()
+missing_export_and_return <- function_check$topic[which(function_check$test_has_export_and_return =="not_ok")]|> unique()
+missing_export_or_nord <- function_check$topic[which(function_check$test_has_export_or_has_nord =="not_ok")] |> unique()
 if(length(missing_export_and_return)>0)RosyUtils::vec_cat(missing_export_and_return)
 if(length(missing_export_or_nord)>0)RosyUtils::vec_cat(missing_export_or_nord)
 extract_function_calls <- function(file) {
@@ -90,7 +94,7 @@ extract_function_calls <- function(file) {
 }
 x<-extract_function_definitions("dev/combined.R")
 x[dw(x)]
-get_external_functions("your_package_here") %>% vec_cat("- ")
+get_external_functions("your_package_here") |> vec_cat("- ")
 #open files ====================================================================
 
 RosyUtils::view_file(pkg_dir)
