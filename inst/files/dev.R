@@ -34,7 +34,7 @@ RosyDev::dev_update()
 RosyDev::fast_commit()
 RosyDev::dev_update_commit_push()
 # test =======================================================================
-cyclocomp::cyclocomp(your_package_here::)
+cyclocomp::cyclocomp(your_package_here::a_function)
 RosyUtils::add_to_global(
 
 )

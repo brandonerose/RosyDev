@@ -81,6 +81,7 @@ file_paths_dev <- function() {
     file.path(pkg_dir, "README.Rmd"),
     file.path(pkg_dir, "NEWS.md"),
     file.path(dev_dir, "dev.R"),
+    file.path(dev_dir, "linting.R"),
     file.path(dev_dir, "test_dev.R"),
     file.path(dev_dir, "test_prod.R"),
     file.path(dev_dir, "vignettes.Rmd"),

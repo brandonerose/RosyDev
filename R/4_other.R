@@ -285,12 +285,6 @@ pkg_net_mod <- function(pkg_name,
     physics = physics,
     arrows = arrows
   )
-  pkg_net_node_edge_plot(OUT = OUT, show_internal = show_internal)
-}
-#' @title pkg_net_mod
-#' @export
-pkg_net_node_edge_plot <- function(OUT,
-                        show_internal = TRUE) {
   if(!show_internal){
     imported <- OUT$node_df$node[which(!OUT$node_df$isExported)]
     OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported),]
@@ -311,9 +305,11 @@ pkg_net_node_edge_plot <- function(OUT,
 #' @title pkg_net_internal_node_edge
 #' @export
 pkg_net_internal_node_edge <- function(pkg_name) {
-  print(nodes1$node[which(nodes1$only_internal_flow)])
+  x <- pkg_net_node_edges(pkg_name,
+                          physics = TRUE,
+                          arrows = "to")
   list(
-    node_df = nodes,
-    edge_df = edges
+    node_df = x$node_df,
+    edge_df = x$edge_df
   )
 }

@@ -42,6 +42,7 @@ setup_RosyDev <- function(
     file.path(pkg_dir, ".Rbuildignore"),
     file.path(dev_dir, "setup.R"),
     file.path(dev_dir, "dev.R"),
+    file.path(dev_dir, "linting.R"),
     file.path(dev_dir, "test_dev.R"),
     file.path(dev_dir, "test_prod.R"),
     file.path(pkg_dir, "README.Rmd")
