@@ -11,6 +11,7 @@ RosyDev::delete_combined()
 # RosyDev::delete_dev()
 RosyDev::dev_pull_and_update() # will delete dev and over write combined
 RosyDev::dev_update_commit_push()# will split from combine, commit and push
+RosyDev::dev_update()
 # Setup ========================================================================
 Rosyverse::load_all()
 pkg_dir <- getwd()
@@ -32,6 +33,11 @@ RosyDev::pkg_dev_nav_combined()
 RosyDev::dev_update()
 RosyDev::fast_commit()
 RosyDev::dev_update_commit_push()
+# test =======================================================================
+cyclocomp::cyclocomp(your_package_here::)
+RosyUtils::add_to_global(
+
+)
 # Style ========================================================================
 lintr::lint(filename = "dev/combined.R")
 lintr::all_linters() |> names()

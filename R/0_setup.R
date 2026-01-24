@@ -29,6 +29,7 @@ setup_RosyDev <- function(
         "Rbuildignore",
         "setup.R",
         "dev.R",
+        "linting.R",
         "test_dev.R",
         "test_prod.R",
         "README.Rmd"

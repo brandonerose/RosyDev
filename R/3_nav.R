@@ -7,8 +7,18 @@ pkg_dev_nav <- function(name = NULL, pane = TRUE) {
   path <- dev_dir <- file.path(getwd(), "dev")
   test_dir <- file.path(dev_dir, "test_dir")
   if (is.null(name)) print(list.files(dev_dir))
-  allowed_names <- c("combined.R", "vignettes.Rmd", "tests.R", "setup.R", "dev.R", "test_dev.R", "test_prod.R", "test_dir")
-  if (name %in% allowed_names) {
+  allowed_file_names <- c(
+    "combined.R",
+    "vignettes.Rmd",
+    "tests.R",
+    "setup.R",
+    "linting.R",
+    "dev.R",
+    "test_dev.R",
+    "test_prod.R",
+    "test_dir"
+  )
+  if (name %in% allowed_file_names) {
     path <- file.path(path, name)
     launch_dir <- dev_dir
     if (name %in% c("test_dev.R", "test_prod.R")) {
