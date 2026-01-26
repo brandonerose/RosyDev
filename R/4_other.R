@@ -313,3 +313,24 @@ pkg_net_internal_node_edge <- function(pkg_name) {
     edge_df = x$edge_df
   )
 }
+#' @title pkg_net_internal_node_edge
+#' @export
+test_wrapper_cat <- function(){
+  x<-checkhelper::find_missing_tags()
+  data_check <- x$data
+  function_check <- x$functions
+  for(file_name in unique(function_check$filename)){
+    cat("# ", basename(tools::file_path_sans_ext(file_name)),
+        " =========================\n")
+    func_rows <- which(function_check$filename==file_name)
+    func_names <- function_check$topic[]
+    func_statues <- function_check$has_export[func_rows]
+    for(func_row in func_rows){
+      z <- ifelse(function_check$has_export[func_row], "Exported", "Internal")
+      cat("#", function_check$topic[func_row], "(",z,")","\n")
+      cat('test_that("',
+          function_check$topic[func_row],
+          ' works!", {\n\n})\n')
+    }
+  }
+}
