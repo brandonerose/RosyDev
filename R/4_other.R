@@ -270,7 +270,7 @@ pkg_net_node_edges <- function(pkg_name,
     node <- nodes$node[i]
     uses <- igraph::subcomponent(g, igraph::V(g)[i], mode = "out") |> names() |> setdiff(node)
     used_by <- igraph::subcomponent(g, igraph::V(g)[i], mode = "in") |> names() |> setdiff(node)
-    reachable <- igraph::subcomponent(g, igraph::V(g)[i], mode = "all") |> names() |> setdiff(node)
+    reachable <- uses |> append(used_by) |> unique() |> setdiff(node)
     nodes$numRecursiveDeps[i] <- length(uses)
     nodes$numRecursiveRevDeps[i] <- length(used_by)
     nodes$reachable_length[i] <- length(reachable)
@@ -356,7 +356,7 @@ test_wrapper_cat <- function(){
 #' @export
 pkg_function_analysis <- function(pkg_path){
   c_path <- file.path(pkg_path, "dev", "combined.R")
-  x <- pkg_net_node_edges(basename(pkg_path))
+  x <- pkg_net_node_edges(pkg_name = basename(pkg_path))
   nodes <- x$node_df
   lint_list <- lintr::lint(filename = c_path,
                            linters = lintr::cyclocomp_linter(complexity_limit = 10L))
@@ -378,7 +378,6 @@ pkg_function_analysis <- function(pkg_path){
       cyclo_df$message
     ) |> strsplit(" ") |> lapply(dplyr::first) |> unlist() |> as.integer()
   )
-
   # add coverage
   cov <- covr::package_coverage(path = pkg_path, type = "tests")
   df <- covr:::as.data.frame.coverage(cov)
@@ -392,7 +391,6 @@ pkg_function_analysis <- function(pkg_path){
       .groups = "drop"
     ) |>
     dplyr::arrange(filename) |> as.data.frame()
-
   actives <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$active))
   publics <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$public_methods))
   func_cov$functions[actives] <- paste0("REDCapSync_project$active$", func_cov$functions[actives])
@@ -409,8 +407,7 @@ pkg_function_analysis <- function(pkg_path){
   # nodes$uses |> strsplit(" [|] ") |> lapply(function(x){
   #   nodes$filename[match(x,nodes$node)] |> table() |> sort(decreasing = T)
   # })
-  num <- sum(nodes$covered, na.rm = TRUE)/sum(nodes$total, na.rm = TRUE)*100
+  num <- sum(nodes$covered, na.rm = TRUE) / sum(nodes$total, na.rm = TRUE) * 100
   cli::cli_alert_info(paste0(round(num, 1),"% coverage"))
   nodes
 }
-
