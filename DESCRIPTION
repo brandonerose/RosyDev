@@ -12,21 +12,26 @@ Depends:
 Imports: 
     attachment,
     checkhelper,
+    cli,
+    covr,
     devtools,
     dplyr,
     golem,
     igraph,
+    lintr,
     magrittr,
     pkgdown,
     pkgload,
     pkgnet,
+    REDCapSync,
     RosyUtils,
     rstudioapi,
     stringr,
     tools,
     usethis,
     utils,
-    visNetwork
+    visNetwork,
+    withr
 Remotes: 
     github::brandonerose/RosyUtils
 Encoding: UTF-8

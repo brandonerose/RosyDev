@@ -235,13 +235,16 @@ remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
 pkg_net_node_edges <- function(pkg_name,
                                physics = TRUE,
                                arrows = "to"){
-  result <- pkgnet::CreatePackageReport(pkg_name)
-  #supress
+  result <- withr::with_envvar(new = c("PKGNET_SUPPRESS_BROWSER" = TRUE),
+                        code = pkgnet::CreatePackageReport(pkg_name))
   nodes <- result$FunctionReporter$nodes
   edges <- result$FunctionReporter$edges
   nodes$id <- nodes$node
   nodes$name <- nodes$node
   nodes$label <- nodes$node
+  is_r6_method <- nodes$type == "R6 method"
+  has_public_method <- grepl("\\$public_methods\\$",nodes$node)
+  nodes$isExported[which(is_r6_method & has_public_method)] <- TRUE
   nodes$group <- ifelse(nodes$isExported,"Exported","Internal")
   nodes$physics <- physics
   OUT <- NULL
@@ -254,22 +257,37 @@ pkg_net_node_edges <- function(pkg_name,
   n <- igraph::vcount(g)
   res <- rep(TRUE, n)  # assume all internal
   # 1️⃣ Downstream contamination
+  i <- sample(seq_len(n),1)
+  i <- "sync_project" |> match(nodes$node)
+  nodes$uses <- NA
+  nodes$used_by <- NA
+  nodes$reachable <- NA
+  nodes$reachable_length <- 0
+  nodes$uses_any_external <- F
+  nodes$used_by_any_external <- F
+  nodes$reachable_any_external <- F
   for (i in seq_len(n)) {
-    reachable <- igraph::subcomponent(g, igraph::V(g)[i], mode = "out")
-    if (any(igraph::V(g)$isExported[reachable])) res[i] <- FALSE
-  }
-  # 2️⃣ Upstream contamination — if any isExported reaches internal
-  external_nodes <- which(igraph::V(g)$isExported)
-  if (length(external_nodes) > 0) {
-    contaminated <- logical(n)
-    for (ext in external_nodes) {
-      # all nodes reachable *from* this isExported node
-      downstream <- igraph::subcomponent(g, igraph::V(g)[ext], mode = "out")
-      contaminated[downstream] <- TRUE
+    node <- nodes$node[i]
+    uses <- igraph::subcomponent(g, igraph::V(g)[i], mode = "out") |> names() |> setdiff(node)
+    used_by <- igraph::subcomponent(g, igraph::V(g)[i], mode = "in") |> names() |> setdiff(node)
+    reachable <- igraph::subcomponent(g, igraph::V(g)[i], mode = "all") |> names() |> setdiff(node)
+    nodes$numRecursiveDeps[i] <- length(uses)
+    nodes$numRecursiveRevDeps[i] <- length(used_by)
+    nodes$reachable_length[i] <- length(reachable)
+    if (nodes$numRecursiveDeps[i] > 0) {
+      nodes$uses[i] <- paste0(uses, collapse = " | ")
+      nodes$uses_any_external[i] <- any(nodes$isExported[match(uses , nodes$node)])
     }
-    res[contaminated] <- FALSE
+    if (nodes$numRecursiveRevDeps[i] > 0) {
+      nodes$used_by[i] <- paste0(used_by, collapse = " | ")
+      nodes$used_by_any_external[i] <- any(nodes$isExported[match(used_by , nodes$node)])
+    }
+    if (nodes$reachable_length[i] > 0) {
+      nodes$reachable[i] <- paste0(reachable, collapse = " | ")
+      nodes$reachable_any_external[i] <- any(nodes$isExported[match(reachable , nodes$node)])
+    }
   }
-  nodes$only_internal_flow <- res[match(nodes$id, igraph::V(g)$name)]
+  nodes$orphan <- nodes$reachable_length == 0L
   OUT$node_df <- nodes
   OUT$edge_df <- edges
   OUT
@@ -334,3 +352,65 @@ test_wrapper_cat <- function(){
     }
   }
 }
+#' @title pkg_function_analysis
+#' @export
+pkg_function_analysis <- function(pkg_path){
+  c_path <- file.path(pkg_path, "dev", "combined.R")
+  x <- pkg_net_node_edges(basename(pkg_path))
+  nodes <- x$node_df
+  lint_list <- lintr::lint(filename = c_path,
+                           linters = lintr::cyclocomp_linter(complexity_limit = 10L))
+  # add cyclocomp
+  cyclo_df <- NULL
+  for(i in seq_len(length(lint_list))){
+    # x[[i]] |>  names()
+    lint_list[[i]]$ranges <- NULL
+    cyclo_df <- cyclo_df |>
+      dplyr::bind_rows(
+        as.data.frame(lint_list[[i]])
+      )
+  }
+  cyclo_df <- data.frame(
+    node = cyclo_df$line |> strsplit(" <- ") |> lapply(dplyr::first) |> unlist(),
+    cyclocomp = gsub(
+      "Reduce the cyclomatic complexity of this expression from ",
+      "",
+      cyclo_df$message
+    ) |> strsplit(" ") |> lapply(dplyr::first) |> unlist() |> as.integer()
+  )
+
+  # add coverage
+  cov <- covr::package_coverage(path = pkg_path, type = "tests")
+  df <- covr:::as.data.frame.coverage(cov)
+  func_cov <- df |>
+    dplyr::group_by(functions, filename) |>
+    dplyr::summarise(
+      missed = sum(value == 0),
+      covered = sum(value > 0),
+      total = dplyr::n(),
+      pct = covered / total * 100,
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(filename) |> as.data.frame()
+
+  actives <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$active))
+  publics <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$public_methods))
+  func_cov$functions[actives] <- paste0("REDCapSync_project$active$", func_cov$functions[actives])
+  func_cov$functions[publics] <- paste0("REDCapSync_project$public_methods$", func_cov$functions[publics])
+  # func_cov$functions[publics]
+  func_cov <- func_cov |> dplyr::rename(node = functions)
+  func_cov$node |>  RosyUtils::vec1_not_in_vec2(nodes$node)
+  nodes$node |>  RosyUtils::vec1_not_in_vec2(func_cov$node)
+  cyclo_df$node |>  RosyUtils::vec1_not_in_vec2(nodes$node)
+  nodes$node |>  RosyUtils::vec1_not_in_vec2(cyclo_df$node)
+  nodes <- nodes |>
+    merge(func_cov, by = "node", all.x = TRUE) |>
+    merge(cyclo_df, by = "node", all.x = TRUE)
+  # nodes$uses |> strsplit(" [|] ") |> lapply(function(x){
+  #   nodes$filename[match(x,nodes$node)] |> table() |> sort(decreasing = T)
+  # })
+  num <- sum(nodes$covered, na.rm = TRUE)/sum(nodes$total, na.rm = TRUE)*100
+  cli::cli_alert_info(paste0(round(num, 1),"% coverage"))
+  nodes
+}
+
