@@ -389,11 +389,10 @@ pkg_function_analysis <- function(pkg_path){
       .groups = "drop"
     ) |>
     dplyr::arrange(filename) |> as.data.frame()
-  actives <- which(func_cov$filename == "R/REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$active))
-  publics <- which(func_cov$filename == "R/REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$public_methods))
-  func_cov$functions[actives] <- paste0("REDCapSync_project$active$", func_cov$functions[actives])
-  func_cov$functions[publics] <- paste0("REDCapSync_project$public_methods$", func_cov$functions[publics])
-
+  actives <- which(func_cov$filename == "R/REDCapSyncProject.R" & func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$active))
+  publics <- which(func_cov$filename == "R/REDCapSyncProject.R" & func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$public_methods))
+  func_cov$functions[actives] <- paste0("REDCapSyncProject$active$", func_cov$functions[actives])
+  func_cov$functions[publics] <- paste0("REDCapSyncProject$public_methods$", func_cov$functions[publics])
   # func_cov$functions[publics]
   func_cov <- func_cov |> dplyr::rename(node = functions)
   func_cov$node |>  RosyUtils::vec1_not_in_vec2(nodes$node)
