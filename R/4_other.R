@@ -341,8 +341,6 @@ test_wrapper_cat <- function(){
     cat("# ", basename(tools::file_path_sans_ext(file_name)),
         " =========================\n")
     func_rows <- which(function_check$filename==file_name)
-    func_names <- function_check$topic[]
-    func_statues <- function_check$has_export[func_rows]
     for(func_row in func_rows){
       z <- ifelse(function_check$has_export[func_row], "Exported", "Internal")
       cat("#", function_check$topic[func_row], "(",z,")","\n")
@@ -391,10 +389,11 @@ pkg_function_analysis <- function(pkg_path){
       .groups = "drop"
     ) |>
     dplyr::arrange(filename) |> as.data.frame()
-  actives <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$active))
-  publics <- which(func_cov$filename == "R/R6-REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$public_methods))
+  actives <- which(func_cov$filename == "R/REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$active))
+  publics <- which(func_cov$filename == "R/REDCapSync_project.R" & func_cov$functions %in% names(REDCapSync:::REDCapSync_project$public_methods))
   func_cov$functions[actives] <- paste0("REDCapSync_project$active$", func_cov$functions[actives])
   func_cov$functions[publics] <- paste0("REDCapSync_project$public_methods$", func_cov$functions[publics])
+
   # func_cov$functions[publics]
   func_cov <- func_cov |> dplyr::rename(node = functions)
   func_cov$node |>  RosyUtils::vec1_not_in_vec2(nodes$node)
@@ -407,6 +406,7 @@ pkg_function_analysis <- function(pkg_path){
   # nodes$uses |> strsplit(" [|] ") |> lapply(function(x){
   #   nodes$filename[match(x,nodes$node)] |> table() |> sort(decreasing = T)
   # })
+  nodes$filename
   num <- sum(nodes$covered, na.rm = TRUE) / sum(nodes$total, na.rm = TRUE) * 100
   cli::cli_alert_info(paste0(round(num, 1),"% coverage"))
   nodes
