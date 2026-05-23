@@ -8,7 +8,7 @@ License: MIT + file LICENSE
 URL: https://github.com/brandonerose/RosyDev
 BugReports: https://github.com/brandonerose/RosyDev/issues
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
 Imports: 
     attachment,
     checkhelper,
