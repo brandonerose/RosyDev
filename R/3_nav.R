@@ -6,7 +6,8 @@
 pkg_dev_nav <- function(name = NULL, pane = TRUE) {
   path <- dev_dir <- file.path(getwd(), "dev")
   test_dir <- file.path(dev_dir, "test_dir")
-  if (is.null(name)) print(list.files(dev_dir))
+  if (is.null(name))
+    print(list.files(dev_dir))
   allowed_file_names <- c(
     "combined.R",
     "vignettes.Rmd",
@@ -24,7 +25,8 @@ pkg_dev_nav <- function(name = NULL, pane = TRUE) {
     if (name %in% c("test_dev.R", "test_prod.R")) {
       launch_dir <- test_dir
     }
-    if (pane) RosyUtils::view_file(launch_dir)
+    if (pane)
+      RosyUtils::view_file(launch_dir)
   }
   RosyUtils::view_file(path = path)
 }
@@ -87,9 +89,9 @@ file_paths_dev <- function() {
     file.path(dev_dir, "vignettes.Rmd"),
     file.path(dev_dir, "tests.R"),
     file.path(dev_dir, "combined.R")
-  )
-  ) {
-    if (file.exists(file_path)) file_paths <- append(file_paths, file_path)
+  )) {
+    if (file.exists(file_path))
+      file_paths <- append(file_paths, file_path)
   }
   return(file_paths)
 }
@@ -97,7 +99,8 @@ show_clickable_devs <- function() {
   cli_alert_wrap("Click below to open dev files...")
   for (file_path in file_paths_dev()) {
     names(file_path) <- basename(file_path)
-    cli_alert_wrap(file = file_path, bullet_type = ifelse(file.exists(file_path), ">", "x"))
+    cli_alert_wrap(file = file_path,
+                   bullet_type = ifelse(file.exists(file_path), ">", "x"))
   }
   return(invisible())
 }

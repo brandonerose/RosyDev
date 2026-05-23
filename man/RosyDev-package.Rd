@@ -19,5 +19,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Brandon Rose \email{thecodingdocs@gmail.com}
 
+Authors:
+\itemize{
+  \item Brandon Rose \email{thecodingdocs@gmail.com}
+}
+
 }
 \keyword{internal}

@@ -1,41 +1,39 @@
 #' @title check_namespace_conflicts
 #' @param pkgs character vector of pkgs
 #' @export
-check_namespace_conflicts <- function(pkgs, ignores = c(
-  "%>%",
-  "pkg_date",
-  "pkg_version",
-  "pkg_name",
-  ".__NAMESPACE__.",
-  ".__S3MethodsTable__.",
-  ".packageName"
-)) {
+check_namespace_conflicts <- function(pkgs,
+                                      ignores = c(
+                                        "%>%",
+                                        "pkg_date",
+                                        "pkg_version",
+                                        "pkg_name",
+                                        ".__NAMESPACE__.",
+                                        ".__S3MethodsTable__.",
+                                        ".packageName"
+                                      )) {
   # pkgs <- pkgs %>% sort()
+  invisible(lapply(pkgs, library, character.only = TRUE))
   x <- NULL
   for (pkg in pkgs) {
-    library(pkg, character.only = TRUE)
     exported_functions <- ls(paste0("package:", pkg))
     internal_functions <-
-      x <- x %>% rbind(
-        data.frame(
-          pkg = pkg,
-          name = ls(paste0("package:", pkg)),
-          type = "exported"
-        )
-      )
-    x <- x %>% rbind(
-      data.frame(
+      x <- x %>% rbind(data.frame(
         pkg = pkg,
-        name = setdiff(ls(envir = asNamespace(pkg), all.names = TRUE), exported_functions),
-        type = "internal"
-      )
-    )
+        name = ls(paste0("package:", pkg)),
+        type = "exported"
+      ))
+    x <- x %>% rbind(data.frame(
+      pkg = pkg,
+      name = setdiff(
+        ls(envir = asNamespace(pkg), all.names = TRUE),
+        exported_functions
+      ),
+      type = "internal"
+    ))
   }
-  y <- data.frame(
-    function_name = unique(x$name)
-  )
+  y <- data.frame(function_name = unique(x$name))
   if (is_something(ignores)) {
-    y <- y[which(!y$function_name %in% ignores), ]
+    y <- y[which(!y$function_name %in% ignores), ,drop= FALSE]
   }
   y$int_int_conflict <- y$function_name %>% sapply(function(function_name) {
     ROWS <- which(x$type %in% c("internal") & x$name == function_name)
@@ -48,7 +46,8 @@ check_namespace_conflicts <- function(pkgs, ignores = c(
       return()
   })
   y$int_exp_conflict <- y$function_name %>% sapply(function(function_name) {
-    ROWS <- which(x$type %in% c("internal", "exported") & x$name == function_name)
+    ROWS <- which(x$type %in% c("internal", "exported") &
+                    x$name == function_name)
     z <- x$pkg[ROWS] %>% unique()
     if (length(z) < 2) {
       return(NA)
@@ -77,14 +76,17 @@ check_namespace_conflicts <- function(pkgs, ignores = c(
       width = (z$function_name %>% nchar() %>% max()) + 2,
       side = "right"
     )
-    message("Below are some conflicts with exported names...\n", z$function_name %>% sapply(function(function_name) {
-      ROW <- which(z$function_name == function_name)
-      return(paste0("   ", z$function_name[ROW], "-->  ", z$exp_exp_conflict[ROW]))
-    }) %>% paste0(collapse = "\n"))
+    message(
+      "Below are some conflicts with exported names...\n",
+      z$function_name %>% sapply(function(function_name) {
+        ROW <- which(z$function_name == function_name)
+        return(paste0("   ", z$function_name[ROW], "-->  ", z$exp_exp_conflict[ROW]))
+      }) %>% paste0(collapse = "\n")
+    )
   } else {
     message("No major conflicts!")
   }
-  return(y)
+  y
 }
 #' @title get_external_functions
 #' @param pkg character vector of pkg
@@ -121,13 +123,18 @@ get_imported_packages <- function(pkg_name) {
   }
   return(imports_vector)
 }
-copy_logos_to_package <- function(copy_to = file.path("inst", "app", "www"), only_if_imported = TRUE) {
+copy_logos_to_package <- function(copy_to = file.path("inst", "app", "www"),
+                                  only_if_imported = TRUE) {
   usethis:::check_is_package()
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
   named_list <- get_logo_paths()
   if (only_if_imported) {
-    named_list <- named_list[which(!startsWith(names(named_list), "Rosy") | (startsWith(names(named_list), "Rosy") & names(named_list) %in% get_imported_packages(pkg_name)))]
+    named_list <- named_list[which(!startsWith(names(named_list), "Rosy") |
+                                     (
+                                       startsWith(names(named_list), "Rosy") &
+                                         names(named_list) %in% get_imported_packages(pkg_name)
+                                     ))]
   }
   dir.create(copy_to, recursive = TRUE, showWarnings = FALSE)
   for (i in 1:length(named_list)) {
@@ -174,7 +181,9 @@ extract_function_definitions <- function(file) {
 dev_show_functions <- function() {
   files <- "dev/combined.R"
   if (!file.exists(files)) {
-    files <- list.files(file.path("R"), pattern = "\\.R$", full.names = TRUE)
+    files <- list.files(file.path("R"),
+                        pattern = "\\.R$",
+                        full.names = TRUE)
   }
   all_functions <- unlist(lapply(files, extract_function_definitions))
   return(all_functions)
@@ -186,7 +195,8 @@ dev_show_duplicated_functions <- function() {
   all_functions <- all_functions[which(duplicated(all_functions))] %>%
     unique() %>%
     sort(decreasing = TRUE)
-  if (length(all_functions) == 0) cli_alert_wrap("No duplicated functions", bullet_type = "v")
+  if (length(all_functions) == 0)
+    cli_alert_wrap("No duplicated functions", bullet_type = "v")
   return(all_functions)
 }
 #' @title dev_function_freq
@@ -194,7 +204,9 @@ dev_show_duplicated_functions <- function() {
 dev_function_freq <- function() {
   files <- "dev/combined.R"
   if (!file.exists(files)) {
-    files <- list.files(file.path("R"), pattern = "\\.R$", full.names = TRUE)
+    files <- list.files(file.path("R"),
+                        pattern = "\\.R$",
+                        full.names = TRUE)
   }
   get_function_freq <- function(file) {
     tmp <- getParseData(parse(file, keep.source = TRUE))
@@ -214,50 +226,54 @@ wrap_roxygen_text <- function(file_path = "dev/combined.R", width = 80) {
   lines <- readLines(file_path)
   new_lines <- c()
   for (line in lines) {
-    if (startsWith(line,"#'")) {
-      if(nchar(line)>80){
-        line <- RosyUtils::wrap_string_to_lines2(text = line,width = 80,spacer = "#' ")
+    if (startsWith(line, "#'")) {
+      if (nchar(line) > 80) {
+        line <- RosyUtils::wrap_string_to_lines2(text = line,
+                                                 width = 80,
+                                                 spacer = "#' ")
       }
     }
     new_lines <- c(new_lines, line)
   }
   writeLines(new_lines, file_path)
-  cli_alert_wrap("Wrapped roxygen!",bullet_type = "v")
+  cli_alert_wrap("Wrapped roxygen!", bullet_type = "v")
 }
 #' @title remove_trailing_whitespace
 #' @export
-remove_trailing_whitespace <- function(file_path = "dev/combined.R"){
+remove_trailing_whitespace <- function(file_path = "dev/combined.R") {
   writeLines(gsub("\\s+$", "", readLines(file_path)) , file_path)
-  cli_alert_wrap("Cleaned whitespaces!",bullet_type = "v")
+  cli_alert_wrap("Cleaned whitespaces!", bullet_type = "v")
 }
 #' @title pkg_net_node_edges
 #' @export
 pkg_net_node_edges <- function(pkg_name,
                                physics = TRUE,
-                               arrows = "to"){
-  result <- withr::with_envvar(new = c("PKGNET_SUPPRESS_BROWSER" = TRUE),
-                        code = pkgnet::CreatePackageReport(pkg_name))
+                               arrows = "to") {
+  result <- withr::with_envvar(
+    new = c("PKGNET_SUPPRESS_BROWSER" = TRUE),
+    code = pkgnet::CreatePackageReport(pkg_name)
+  )
   nodes <- result$FunctionReporter$nodes
   edges <- result$FunctionReporter$edges
   nodes$id <- nodes$node
   nodes$name <- nodes$node
   nodes$label <- nodes$node
   is_r6_method <- nodes$type == "R6 method"
-  has_public_method <- grepl("\\$public_methods\\$",nodes$node)
+  has_public_method <- grepl("\\$public_methods\\$", nodes$node)
   nodes$isExported[which(is_r6_method & has_public_method)] <- TRUE
-  nodes$group <- ifelse(nodes$isExported,"Exported","Internal")
+  nodes$group <- ifelse(nodes$isExported, "Exported", "Internal")
   nodes$physics <- physics
   OUT <- NULL
   edges$from <- edges$SOURCE
   edges$to <- edges$TARGET
   edges$arrows <- arrows
-  nodes$orphan <- !(nodes$node %in% unique(c(edges$SOURCE,edges$TARGET)))
+  nodes$orphan <- !(nodes$node %in% unique(c(edges$SOURCE, edges$TARGET)))
   # build directed graph
-  g <-igraph::graph_from_data_frame(edges, vertices = nodes, directed = TRUE)
+  g <- igraph::graph_from_data_frame(edges, vertices = nodes, directed = TRUE)
   n <- igraph::vcount(g)
   res <- rep(TRUE, n)  # assume all internal
   # 1️⃣ Downstream contamination
-  i <- sample(seq_len(n),1)
+  i <- sample(seq_len(n), 1)
   i <- "sync_project" |> match(nodes$node)
   nodes$uses <- NA
   nodes$used_by <- NA
@@ -298,16 +314,15 @@ pkg_net_mod <- function(pkg_name,
                         show_internal = FALSE,
                         physics = TRUE,
                         arrows = "to") {
-  OUT <- pkg_net_node_edges(
-    pkg_name = pkg_name,
-    physics = physics,
-    arrows = arrows
-  )
-  if(!show_internal){
+  OUT <- pkg_net_node_edges(pkg_name = pkg_name,
+                            physics = physics,
+                            arrows = arrows)
+  if (!show_internal) {
     imported <- OUT$node_df$node[which(!OUT$node_df$isExported)]
-    OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported),]
+    OUT$node_df <- OUT$node_df[which(OUT$node_df$isExported), ]
     OUT$node_df$group <- NULL
-    OUT$edge_df <- OUT$edge_df[which(!OUT$edge_df$SOURCE%in%imported|!OUT$edge_df$TARGET%in%imported),]
+    OUT$edge_df <- OUT$edge_df[which(!OUT$edge_df$SOURCE %in% imported |
+                                       !OUT$edge_df$TARGET %in% imported), ]
   }
   rendered_graph <- visNetwork::visNetwork(
     nodes =  OUT$node_df,
@@ -323,27 +338,23 @@ pkg_net_mod <- function(pkg_name,
 #' @title pkg_net_internal_node_edge
 #' @export
 pkg_net_internal_node_edge <- function(pkg_name) {
-  x <- pkg_net_node_edges(pkg_name,
-                          physics = TRUE,
-                          arrows = "to")
-  list(
-    node_df = x$node_df,
-    edge_df = x$edge_df
-  )
+  x <- pkg_net_node_edges(pkg_name, physics = TRUE, arrows = "to")
+  list(node_df = x$node_df, edge_df = x$edge_df)
 }
 #' @title pkg_net_internal_node_edge
 #' @export
-test_wrapper_cat <- function(){
-  x<-checkhelper::find_missing_tags()
+test_wrapper_cat <- function() {
+  x <- checkhelper::find_missing_tags()
   data_check <- x$data
   function_check <- x$functions
-  for(file_name in unique(function_check$filename)){
-    cat("# ", basename(tools::file_path_sans_ext(file_name)),
+  for (file_name in unique(function_check$filename)) {
+    cat("# ",
+        basename(tools::file_path_sans_ext(file_name)),
         " =========================\n")
-    func_rows <- which(function_check$filename==file_name)
-    for(func_row in func_rows){
+    func_rows <- which(function_check$filename == file_name)
+    for (func_row in func_rows) {
       z <- ifelse(function_check$has_export[func_row], "Exported", "Internal")
-      cat("#", function_check$topic[func_row], "(",z,")","\n")
+      cat("#", function_check$topic[func_row], "(", z, ")", "\n")
       cat('test_that("',
           function_check$topic[func_row],
           ' works!", {\n\n})\n')
@@ -352,21 +363,21 @@ test_wrapper_cat <- function(){
 }
 #' @title pkg_function_analysis
 #' @export
-pkg_function_analysis <- function(pkg_path){
+pkg_function_analysis <- function(pkg_path) {
   c_path <- file.path(pkg_path, "dev", "combined.R")
   x <- pkg_net_node_edges(pkg_name = basename(pkg_path))
   nodes <- x$node_df
-  lint_list <- lintr::lint(filename = c_path,
-                           linters = lintr::cyclocomp_linter(complexity_limit = 10L))
+  lint_list <- lintr::lint(
+    filename = c_path,
+    linters = lintr::cyclocomp_linter(complexity_limit = 10L)
+  )
   # add cyclocomp
   cyclo_df <- NULL
-  for(i in seq_len(length(lint_list))){
+  for (i in seq_len(length(lint_list))) {
     # x[[i]] |>  names()
     lint_list[[i]]$ranges <- NULL
     cyclo_df <- cyclo_df |>
-      dplyr::bind_rows(
-        as.data.frame(lint_list[[i]])
-      )
+      dplyr::bind_rows(as.data.frame(lint_list[[i]]))
   }
   cyclo_df <- data.frame(
     node = cyclo_df$line |> strsplit(" <- ") |> lapply(dplyr::first) |> unlist(),
@@ -389,8 +400,14 @@ pkg_function_analysis <- function(pkg_path){
       .groups = "drop"
     ) |>
     dplyr::arrange(filename) |> as.data.frame()
-  actives <- which(func_cov$filename == "R/REDCapSyncProject.R" & func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$active))
-  publics <- which(func_cov$filename == "R/REDCapSyncProject.R" & func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$public_methods))
+  actives <- which(
+    func_cov$filename == "R/REDCapSyncProject.R" &
+      func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$active)
+  )
+  publics <- which(
+    func_cov$filename == "R/REDCapSyncProject.R" &
+      func_cov$functions %in% names(REDCapSync:::REDCapSyncProject$public_methods)
+  )
   func_cov$functions[actives] <- paste0("REDCapSyncProject$active$", func_cov$functions[actives])
   func_cov$functions[publics] <- paste0("REDCapSyncProject$public_methods$", func_cov$functions[publics])
   # func_cov$functions[publics]
@@ -407,6 +424,6 @@ pkg_function_analysis <- function(pkg_path){
   # })
   nodes$filename
   num <- sum(nodes$covered, na.rm = TRUE) / sum(nodes$total, na.rm = TRUE) * 100
-  cli::cli_alert_info(paste0(round(num, 1),"% coverage"))
+  cli::cli_alert_info(paste0(round(num, 1), "% coverage"))
   nodes
 }

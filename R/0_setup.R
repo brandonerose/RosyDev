@@ -6,37 +6,34 @@
 #' @param use_golem logical for using golem
 #' @return path
 #' @export
-setup_RosyDev <- function(
-    silent = FALSE,
-    launch_files = FALSE,
-    overwrite = FALSE,
-    use_golem = FALSE,
-    only_if_imported = TRUE) {
+setup_RosyDev <- function(silent = FALSE,
+                          launch_files = FALSE,
+                          overwrite = FALSE,
+                          use_golem = FALSE,
+                          only_if_imported = TRUE) {
   usethis:::check_is_package()
   # usethis::use_pipe(export = FALSE)
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
   dev_dir <- file.path(pkg_dir, "dev")
   test_dir <- file.path(dev_dir, "test_dir")
-  if (!silent) message("pkg_dir: ", pkg_dir)
+  if (!silent)
+    message("pkg_dir: ", pkg_dir)
   dir.create(dev_dir, showWarnings = FALSE)
   dir.create(test_dir, showWarnings = FALSE)
-  copy_these <- system.file(
-    file.path(
-      "files",
-      c(
-        "gitignore",
-        "Rbuildignore",
-        "setup.R",
-        "dev.R",
-        "linting.R",
-        "test_dev.R",
-        "test_prod.R",
-        "README.Rmd"
-      )
-    ),
-    package = "RosyDev"
-  )
+  copy_these <- system.file(file.path(
+    "files",
+    c(
+      "gitignore",
+      "Rbuildignore",
+      "setup.R",
+      "dev.R",
+      "linting.R",
+      "test_dev.R",
+      "test_prod.R",
+      "README.Rmd"
+    )
+  ), package = "RosyDev")
   paste_here <- c(
     file.path(pkg_dir, ".gitignore"),
     file.path(pkg_dir, ".Rbuildignore"),
@@ -51,13 +48,12 @@ setup_RosyDev <- function(
     the_file_exisits <- file.exists(paste_here[i])
     if (the_file_exisits) {
       message("Already a file: ", paste_here[i])
-      if (overwrite) message("overwritten!")
+      if (overwrite)
+        message("overwritten!")
     }
-    was_copied <- file.copy(
-      from = copy_these[i],
-      to = paste_here[i],
-      overwrite = overwrite
-    )
+    was_copied <- file.copy(from = copy_these[i],
+                            to = paste_here[i],
+                            overwrite = overwrite)
     if (was_copied) {
       if (basename(copy_these[i]) %in% c("dev.R", "README.Rmd", "test_prod.R")) {
         RosyUtils::replace_word_file(
@@ -69,14 +65,12 @@ setup_RosyDev <- function(
     }
   }
   dev_combine_split_R_files()
-  if (launch_files) launch_devs()
+  if (launch_files)
+    launch_devs()
   # copy_to <- file.path("man","figures")
   copy_to <- file.path("inst", "app", "www") # can fix this later
   if (use_golem) {
-    copy_golem_to_wd(
-      overwrite = overwrite,
-      silent = silent
-    )
+    copy_golem_to_wd(overwrite = overwrite, silent = silent)
     copy_to <- file.path("inst", "app", "www")
     copy_logos_to_package(copy_to = copy_to, only_if_imported = only_if_imported)
   }

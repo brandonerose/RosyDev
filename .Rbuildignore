@@ -15,3 +15,5 @@ $run_dev.*
 ^\.github$
 ^doc$
 ^Meta$
+^\.positai$
+^\.claude$

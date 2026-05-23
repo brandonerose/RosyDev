@@ -4,24 +4,31 @@
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_update <- function(
-    silent = FALSE,
-    is_production = FALSE,
-    overwrite = FALSE) {
+dev_update <- function(silent = FALSE,
+                       is_production = FALSE,
+                       overwrite = FALSE) {
   usethis:::check_is_package()
   pkg_dir <- getwd()
   pkg_name <- basename(pkg_dir)
-  dev_combine_split_R_files(choice = "both", silent = silent, overwrite = overwrite)
+  dev_combine_split_R_files(choice = "both",
+                            silent = silent,
+                            overwrite = overwrite)
   devtools::document()
   attachment::att_amend_desc()
   golem::detach_all_attached()
   devtools::load_all()
-  dev_combine_split_R_files(choice = "combine", silent = silent, overwrite = TRUE)
+  dev_combine_split_R_files(choice = "combine",
+                            silent = silent,
+                            overwrite = TRUE)
   pkg_version <- as.character(utils::packageVersion(pkg_name))
   if (file.exists("inst/golem-config.yml")) {
     copy_golem_to_wd()
-    golem::amend_golem_config(key = "golem_name", value = pkg_name, talkative = FALSE)
-    golem::amend_golem_config(key = "golem_version", value = pkg_version, talkative = FALSE)
+    golem::amend_golem_config(key = "golem_name",
+                              value = pkg_name,
+                              talkative = FALSE)
+    golem::amend_golem_config(key = "golem_version",
+                              value = pkg_version,
+                              talkative = FALSE)
     golem::amend_golem_config(key = "app_prod", is_production, talkative = FALSE)
     options("golem.app.prod" = is_production)
   }
@@ -74,12 +81,11 @@ dev_update <- function(
 #' @param silent logical for messages
 #' @return message
 #' @export
-dev_pull_and_update <- function(
-    silent = FALSE,
-    and_delete_dev = TRUE
-) {
+dev_pull_and_update <- function(silent = FALSE,
+                                and_delete_dev = TRUE) {
   usethis:::git_pull()
-  if(and_delete_dev)delete_dev()
+  if (and_delete_dev)
+    delete_dev()
   setup_RosyDev()
   dev_update(silent = silent, overwrite = TRUE)
 }
@@ -91,7 +97,7 @@ dev_pull_and_update <- function(
 dev_update_commit_push <- function(silent = FALSE,
                                    is_production = FALSE,
                                    overwrite = FALSE,
-                                   message = "dev"){
+                                   message = "dev") {
   dev_update(silent = silent,
              is_production = is_production,
              overwrite = overwrite)
@@ -120,12 +126,10 @@ dev_document <- function(pkgdown = FALSE, force = FALSE) {
     if (do_it || force) {
       devtools::build_readme()
       update_log <- update_log[which(update_log$file != ref_file), ] %>%
-        rbind(
-          data.frame(
-            file = ref_file,
-            mtime = file.info(ref_file)$mtime %>% as.character()
-          )
-        )
+        rbind(data.frame(
+          file = ref_file,
+          mtime = file.info(ref_file)$mtime %>% as.character()
+        ))
       any_updates <- TRUE
     }
   }
@@ -143,12 +147,10 @@ dev_document <- function(pkgdown = FALSE, force = FALSE) {
       if (do_it || force) {
         devtools::build_vignettes()
         update_log <- update_log[which(update_log$file != ref_file), ] %>%
-          rbind(
-            data.frame(
-              file = ref_file,
-              mtime = file.info(ref_file)$mtime %>% as.character()
-            )
-          )
+          rbind(data.frame(
+            file = ref_file,
+            mtime = file.info(ref_file)$mtime %>% as.character()
+          ))
         any_updates <- TRUE
       }
     }
@@ -172,21 +174,38 @@ dev_document <- function(pkgdown = FALSE, force = FALSE) {
 #' @param silent logical for messages
 #' @return message
 #' @export
-add_to_sysdata <- function(..., silent = FALSE, overwrite = FALSE) {
+add_to_sysdata <- function(...,
+                           silent = FALSE,
+                           overwrite = FALSE) {
   objs <- usethis:::get_objs_from_dots(usethis:::dots(...))
   usethis:::check_is_package()
   temp_env <- new.env()
   path <- "R/sysdata.rda"
   if (file.exists(path) && !overwrite) {
     load(path, envir = temp_env)
-    if (!silent) message("RosyDev loaded: ", names(temp_env) %>% paste0(collapse = ", "))
+    if (!silent)
+      message("RosyDev loaded: ",
+              names(temp_env) %>% paste0(collapse = ", "))
   }
   for (object_name in objs) {
-    if (!silent) ifelse(object_name %in% objects(envir = temp_env), "Updated: ", "Added: ") %>% message(object_name)
-    assign(object_name, get(object_name, envir = parent.frame()), envir = temp_env)
+    if (!silent)
+      ifelse(object_name %in% objects(envir = temp_env),
+             "Updated: ",
+             "Added: ") %>% message(object_name)
+    assign(object_name,
+           get(object_name, envir = parent.frame()),
+           envir = temp_env)
   }
-  save(list = names(temp_env), file = path, envir = temp_env, compress = "bzip2", version = 3,ascii = FALSE)
-  if (!silent) message("RosyDev saved: ", names(temp_env) %>% paste0(collapse = ", "))
+  save(
+    list = names(temp_env),
+    file = path,
+    envir = temp_env,
+    compress = "bzip2",
+    version = 3,
+    ascii = FALSE
+  )
+  if (!silent)
+    message("RosyDev saved: ", names(temp_env) %>% paste0(collapse = ", "))
 }
 #' @title Fast Commit
 #' @description commit for git with one function
@@ -195,7 +214,8 @@ add_to_sysdata <- function(..., silent = FALSE, overwrite = FALSE) {
 #' @return commited git
 #' @export
 fast_commit <- function(message = "dev", push = FALSE) {
-  if (missing(message)) message <- readline("Enter git message --> ")
+  if (missing(message))
+    message <- readline("Enter git message --> ")
   usethis::use_git(message = message)
   if (push) {
     usethis:::git_push()
@@ -232,7 +252,8 @@ bump_version <- function(which = "dev") {
 #' @inheritParams setup_RosyDev
 #' @return files being copied if needed/wanted
 copy_golem_to_wd <- function(overwrite = FALSE, silent = TRUE) {
-  if (!usethis:::is_package()) stop("Your wd is not a package!")
+  if (!usethis:::is_package())
+    stop("Your wd is not a package!")
   dir.create("inst", showWarnings = FALSE)
   golem_files <- c(
     system.file("shinyexample", "inst", "golem-config.yml", package = "golem"),
@@ -244,22 +265,22 @@ copy_golem_to_wd <- function(overwrite = FALSE, silent = TRUE) {
     path_to_new <- file.path(dn, bn)
     the_file_exisits <- file.exists(path_to_new)
     if (!the_file_exisits || overwrite) {
-      file.copy(
-        from = golem_file,
-        to = dn,
-        overwrite = TRUE
-      )
-      try(
-        {
-          RosyUtils::replace_word_file(file = path_to_new, pattern = "shinyexample", replace = basename(getwd()))
-        },
-        silent = TRUE
-      )
+      file.copy(from = golem_file,
+                to = dn,
+                overwrite = TRUE)
+      try({
+        RosyUtils::replace_word_file(
+          file = path_to_new,
+          pattern = "shinyexample",
+          replace = basename(getwd())
+        )
+      }, silent = TRUE)
     }
     if (!silent) {
       if (the_file_exisits) {
         message("Already a file: ", path_to_new)
-        if (overwrite) message("overwritten!")
+        if (overwrite)
+          message("overwritten!")
       }
     }
   }
@@ -269,38 +290,34 @@ copy_golem_to_wd <- function(overwrite = FALSE, silent = TRUE) {
 #' @return message
 #' @export
 delete_combined <- function() {
-  if (!usethis:::is_package()) stop("Your wd is not a package!")
-  RosyUtils::delete_file(
-    path = file.path(getwd(), "dev", "combined.R")
-  )
+  if (!usethis:::is_package())
+    stop("Your wd is not a package!")
+  RosyUtils::delete_file(path = file.path(getwd(), "dev", "combined.R"))
 }
 #' @title delete_dev
 #' @description delete combined.R file in dev for when you pull a new update from github
 #' @return message
 #' @export
 delete_dev <- function() {
-  if (!usethis:::is_package()) stop("Your wd is not a package!")
-  RosyUtils::delete_file(
-    path = file.path(getwd(), "dev", "dev.R")
-  )
+  if (!usethis:::is_package())
+    stop("Your wd is not a package!")
+  RosyUtils::delete_file(path = file.path(getwd(), "dev", "dev.R"))
 }
 #' @title delete_combined_tests
 #' @description delete tests.R file in dev for when you pull a new update from github
 #' @return message
 #' @export
 delete_combined_tests <- function() {
-  if (!usethis:::is_package()) stop("Your wd is not a package!")
-  RosyUtils::delete_file(
-    path = file.path(getwd(), "dev", "tests.R")
-  )
+  if (!usethis:::is_package())
+    stop("Your wd is not a package!")
+  RosyUtils::delete_file(path = file.path(getwd(), "dev", "tests.R"))
 }
 #' @title delete_combined_vignettes
 #' @description delete tests.R file in dev for when you pull a new update from github
 #' @return message
 #' @export
 delete_combined_vignettes <- function() {
-  if (!usethis:::is_package()) stop("Your wd is not a package!")
-  RosyUtils::delete_file(
-    path = file.path(getwd(), "dev", "vignettes.Rmd")
-  )
+  if (!usethis:::is_package())
+    stop("Your wd is not a package!")
+  RosyUtils::delete_file(path = file.path(getwd(), "dev", "vignettes.Rmd"))
 }
